@@ -1,6 +1,6 @@
-import { IconButton, Grid, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Typography, Button } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CardItem } from "./CardItem";
 import { MuiLayout } from "./MuiLayout";
 import AddIcon from "@mui/icons-material/Add";
@@ -47,22 +47,14 @@ export const Home = () => {
 
   return (
     <MuiLayout>
-      <Stack
-        spacing={2}
+      <Typography
         mb={"3rem"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        direction={"row"}
+        align="center"
+        sx={{ typography: { xs: "h4", sm: "h3", lg: "h2" } }}
       >
-        <Typography variant="h3">All Movies</Typography>
-        {token.tokenStr && (
-          <Link to="/create">
-            <IconButton size="large" color="success">
-              <AddIcon fontSize="inherit" />
-            </IconButton>
-          </Link>
-        )}
-      </Stack>
+        All Movies
+      </Typography>
+
       {movieList?.length === 0 && (
         <Stack
           minHeight={"50vh"}
@@ -82,13 +74,28 @@ export const Home = () => {
         </Stack>
       )}
       <Grid container spacing={2} rowSpacing={3}>
-        {/* <Grid item xs={12} sm={6} md={4}>
-          Add
-        </Grid> */}
+        {token.tokenStr && (
+          <Grid item xs={12}>
+            <Stack height={50}>
+              <Button
+                onClick={() => navigate("/create")}
+                sx={{
+                  width: "fit-content",
+                  size: { xs: "small", sm: "large" },
+                }}
+                variant="contained"
+                color="success"
+                endIcon={<AddIcon fontSize="inherit" />}
+              >
+                Create
+              </Button>
+            </Stack>
+          </Grid>
+        )}
         {movieList?.map((el) => {
           const { rating, review, year, title, director, _id: id, user } = el;
           return (
-            <Grid key={id} item xs={12} sm={6} md={4}>
+            <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
               <CardItem
                 movieid={id}
                 directorname={director.name}

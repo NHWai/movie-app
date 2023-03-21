@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Box,
+  Stack,
 } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -51,55 +52,113 @@ export const CardItem = (props: PropsCardItem) => {
     delMovie(movieid, token.tokenStr);
   };
 
+  // return (
+  //   <Card>
+  //     <CardContent>
+  //       <Typography
+  //         sx={{ fontSize: 12, fontStyle: "italic" }}
+  //         color="text.secondary"
+  //         gutterBottom
+  //       >
+  //         Released Date : {year}
+  //       </Typography>
+  //       <Typography variant="h5" component="div">
+  //         {title}
+  //       </Typography>
+  //       <Typography
+  //         sx={{ mb: 1.5, fontSize: 12, fontStyle: "italic" }}
+  //         color="text.secondary"
+  //       >
+  //         Directed by {directorname}
+  //       </Typography>
+  //       <Typography variant="body1">{review} </Typography>
+  //       <Typography variant="body2">{`"Rating:${rating}"`}</Typography>
+  //     </CardContent>
+  //     <CardActions>
+  //       <Box sx={{ display: "flex", width: "100%" }}>
+  //         <Box sx={{ flexGrow: 1 }}>
+  //           <Button onClick={() => navigate(`/movie/${movieid}`)} size="small">
+  //             See More
+  //           </Button>
+  //         </Box>
+  //         <Box>
+  //           <Button
+  //             onClick={() => navigate(`/edit/${movieid}`)}
+  //             color="success"
+  //             disabled={user === token.id ? false : true}
+  //             size="small"
+  //           >
+  //             Edit
+  //           </Button>
+  //           <Button
+  //             onClick={handleDelete}
+  //             color="error"
+  //             disabled={user === token.id ? false : true}
+  //             size="small"
+  //           >
+  //             Delete
+  //           </Button>
+  //         </Box>
+  //       </Box>
+  //     </CardActions>
+  //   </Card>
+  // );
   return (
-    <Card>
-      <CardContent>
-        <Typography
-          sx={{ fontSize: 12, fontStyle: "italic" }}
-          color="text.secondary"
-          gutterBottom
-        >
-          Released Date : {year}
-        </Typography>
-        <Typography variant="h5" component="div">
-          {title}
-        </Typography>
-        <Typography
-          sx={{ mb: 1.5, fontSize: 12, fontStyle: "italic" }}
-          color="text.secondary"
-        >
-          Directed by {directorname}
-        </Typography>
-        <Typography variant="body1">{review} </Typography>
-        <Typography variant="body2">{`"Rating:${rating}"`}</Typography>
-      </CardContent>
-      <CardActions>
-        <Box sx={{ display: "flex", width: "100%" }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Button onClick={() => navigate(`/movie/${movieid}`)} size="small">
-              See More
-            </Button>
-          </Box>
-          <Box>
-            <Button
-              onClick={() => navigate(`/edit/${movieid}`)}
-              color="success"
-              disabled={user === token.id ? false : true}
-              size="small"
-            >
-              Edit
-            </Button>
-            <Button
-              onClick={handleDelete}
-              color="error"
-              disabled={user === token.id ? false : true}
-              size="small"
-            >
-              Delete
-            </Button>
-          </Box>
+    <Stack
+      height={"270px"}
+      p={1}
+      justifyContent={"space-evenly"}
+      sx={{
+        borderRadius: "0.3rem",
+        boxShadow: "0 2px 4px 0 rgba(0,0,0,0.2)",
+        transition: "0.3s",
+        "&:hover": { boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)" },
+      }}
+    >
+      <Typography
+        sx={{ fontSize: 12, fontStyle: "italic" }}
+        color="text.secondary"
+        gutterBottom
+      >
+        Released Date : {year}
+      </Typography>
+      <Typography variant="h5" component="div">
+        {title}
+      </Typography>
+      <Typography
+        sx={{ mb: 1.5, fontSize: 12, fontStyle: "italic" }}
+        color="text.secondary"
+      >
+        Directed by {directorname}
+      </Typography>
+      <Typography variant="body1">{review} </Typography>
+      <Typography variant="body2">{`"Rating:${rating}"`}</Typography>
+      <Box sx={{ display: "flex", width: "100%" }}>
+        <Box sx={{ flexGrow: 1 }}>
+          <Button onClick={() => navigate(`/movie/${movieid}`)} size="small">
+            See More
+          </Button>
         </Box>
-      </CardActions>
-    </Card>
+
+        <Box>
+          <Button
+            onClick={() => navigate(`/edit/${movieid}`)}
+            color="success"
+            disabled={user === token.id ? false : true}
+            size="small"
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={handleDelete}
+            color="error"
+            disabled={user === token.id ? false : true}
+            size="small"
+          >
+            Delete
+          </Button>
+        </Box>
+      </Box>
+    </Stack>
   );
 };

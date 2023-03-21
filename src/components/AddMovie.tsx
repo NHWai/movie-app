@@ -39,11 +39,7 @@ export const AddMovie = () => {
   const [next, setNext] = React.useState(false);
   const { token } = React.useContext(MyContext);
   const navigate = useNavigate();
-  // const [firstRender, setFirstRender] = React.useState(false);
-
-  // React.useEffect(() => {
-  //   setFirstRender(true);
-  // }, []);
+  const [isLoad, setIsLoad] = React.useState(false);
 
   const validate = (movieObj: MovieType): boolean => {
     const newObj = JSON.parse(JSON.stringify(movieObj));
@@ -82,6 +78,7 @@ export const AddMovie = () => {
   };
 
   const handleSubmit = () => {
+    setIsLoad(true);
     validate(movie) && token.tokenStr && newMovie(movie);
   };
 
@@ -247,7 +244,7 @@ export const AddMovie = () => {
                 size="small"
                 variant="contained"
               >
-                Submit
+                {isLoad ? "Loading" : "Submit"}
               </Button>
             </Stack>
           )}

@@ -33,10 +33,10 @@ export const LoginPage = () => {
     role: "",
   });
   const { token, setToken } = useContext(MyContext);
+  const [isLoad, setIsLoad] = useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    console.log(token.tokenStr);
     token.tokenStr && navigate("/");
   }, [token, navigate]);
 
@@ -187,10 +187,11 @@ export const LoginPage = () => {
                   : true
               }
               onClick={() => {
+                setIsLoad(true);
                 fetchToken(formData);
               }}
             >
-              {isLogin ? "Sign In" : "Login"}
+              {isLoad ? "Loading" : isLogin ? "Sign Up" : "Login"}
             </Button>
             <Box
               component={"button"}
@@ -204,7 +205,7 @@ export const LoginPage = () => {
               }}
               onClick={() => setIsLogin((pre) => !pre)}
             >
-              {isLogin ? "Login" : "Sign In"}
+              {isLogin ? "Login" : "Sign Up"}
             </Box>
           </Stack>
         </Stack>

@@ -1,6 +1,7 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MovielistType } from "./Home";
 
 type CastType = {
@@ -61,13 +62,27 @@ const Movie = () => {
     <Box sx={{ marginLeft: "1rem", marginY: "1rem" }}>
       {movieItem ? (
         <div>
-          <Stack direction={"row"}>
-            <Link to="/">Go Back</Link>
-            <Typography flexGrow={1} mb="2rem" variant="h2" align="center">
+          <Stack>
+            <IconButton
+              onClick={() => navigate(-1)}
+              sx={{ width: "fit-content" }}
+              color="inherit"
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography
+              flexGrow={1}
+              mb="2rem"
+              sx={{
+                typography: { xs: "h5", sm: "h3", lg: "h2" },
+                fontWeight: "bold",
+              }}
+              align="center"
+            >
               {movieItem?.title}
             </Typography>
           </Stack>
-          <Typography variant="h5">
+          <Typography sx={{ typography: { md: "h5" } }}>
             Directed by {movieItem?.director.name}
           </Typography>
           <Typography variant="subtitle1" fontStyle={"italic"} mb="1rem">

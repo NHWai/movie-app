@@ -1,4 +1,10 @@
-import { Button, MenuItem, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Stack,
+  TextareaAutosize,
+  TextField,
+} from "@mui/material";
 import React from "react";
 import { FormLayout } from "./FormLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -9,246 +15,321 @@ import { useNavigate } from "react-router-dom";
 
 export type DirectorType = {
   name: string;
-  phoneNo?: string;
   gender: string;
 };
 
 export type MovieType = {
   title: "";
   director: DirectorType;
-  rating: number;
+  genres: string[];
+  rating: number | string;
   review: string;
-  year: number;
-  [key: string]: string | number | DirectorType;
+  year: number | string;
+  [key: string]: string | number | DirectorType | string[];
+};
+
+type MovieProps = {
+  title: string;
+  dirname: string;
+  dirgender: string;
+  genres: string[];
+  rating: string;
+  review: string;
+  year: string;
+  [key: string]: string | string[];
 };
 
 export const initialMovie: MovieType = {
   title: "",
   director: {
     name: "",
-    phoneNo: "",
     gender: "",
   },
-  rating: 0,
+  genres: [],
+  rating: "",
   review: "",
-  year: 0,
+  year: "",
 };
 
+export const initialMovieProps: MovieProps = {
+  title: "",
+  dirname: "",
+  dirgender: "",
+  genres: [],
+  rating: "",
+  review: "",
+  year: "",
+};
+
+export const movieGenres = [
+  "Action",
+  "Anime",
+  "Adventure",
+  "Comedy",
+  "Crime",
+  "Drama",
+  "Fantasy",
+  "Horror",
+  "Legal",
+  "Mystery",
+  "Musical",
+  "Romance",
+  "Sci/Fi",
+  "Thriller",
+  "Western",
+  "SitCom",
+];
+
 export const AddMovie = () => {
-  const [movie, setMovie] = React.useState<MovieType>(initialMovie);
+  const [movie, setMovie] = React.useState<MovieProps>(initialMovieProps);
   const [next, setNext] = React.useState(false);
   const { token } = React.useContext(MyContext);
   const navigate = useNavigate();
   const [isLoad, setIsLoad] = React.useState(false);
-
-  const validate = (movieObj: MovieType): boolean => {
-    const newObj = JSON.parse(JSON.stringify(movieObj));
-    const dirObj = newObj.director;
-    delete newObj.director;
-    const testObj = { ...newObj, ...dirObj };
-    let returnbool: boolean = true;
-    for (const key in testObj) {
-      returnbool = returnbool && helpTextFunc(testObj[key], key) === " ";
-    }
-    return returnbool;
-  };
-
-  const newMovie = async (movie: MovieType) => {
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
-    myHeaders.append("Content-Type", "application/json");
-    const raw = JSON.stringify(movie);
-    const url = `${process.env.REACT_APP_BASE_URL}/movies`;
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow",
-      });
-      // const data = await res.json();
-      if (res.status === 201) {
-        navigate("/");
-      } else {
-        throw Error("cannot create the movie");
-      }
-    } catch (err) {
-      navigate(`/error/${err}`);
-    }
-  };
-
-  const handleSubmit = () => {
-    setIsLoad(true);
-    validate(movie) && token.tokenStr && newMovie(movie);
-  };
+  const [errArr, setErrArr] = React.useState<MovieProps>(initialMovieProps);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (
-      e.target.name === "name" ||
-      e.target.name === "phoneNo" ||
-      e.target.name === "gender"
-    ) {
-      return setMovie((pre) => {
-        return {
-          ...pre,
-          director: {
-            ...pre.director,
-            [e.target.name]: e.target.value.trim(),
-          },
-        };
-      });
+    //if it is array
+    if (e.target.name === "genres") {
+      const newVal: any = e.target.value;
+      if (newVal.length <= 3) {
+        return setMovie((pre) => {
+          return {
+            ...pre,
+            [e.target.name]: newVal,
+          };
+        });
+      } else {
+        alert("cant choose more than three genres");
+      }
+      return;
     }
+
     return setMovie((pre) => {
       return {
         ...pre,
-        [e.target.name]:
-          e.target.name === "year" || e.target.name === "rating"
-            ? Number(e.target.value)
-            : e.target.value,
+        [e.target.name]: e.target.value,
       };
     });
   };
 
-  const helpTextFunc = (
-    term: string | number | undefined,
-    type?: string
-  ): string => {
-    if (typeof term === "string") {
-      if (type === "phoneNo") {
-        return " ";
-      } else if (term.trim() === "") {
-        return `can't be empty`;
-      }
+  const handleSubmitted = (e: any) => {
+    e.preventDefault();
+
+    if (!errArr.title && !errArr.rating && !errArr.review && !errArr.year) {
+      setNext(true);
     }
-    if (typeof term === "number") {
-      if (term <= 0) {
-        return `can't be zero or less`;
-      }
-      if (type === "year" && term.toString().length !== 4) {
-        return "must be 4 figures";
-      }
-      if (type === "rating" && term > 5) {
-        return "please rate 1 out of 5";
-      }
+    if (
+      !errArr.title &&
+      !errArr.rating &&
+      !errArr.review &&
+      !errArr.year &&
+      !errArr.genres &&
+      !errArr.dirname &&
+      !errArr.dirgender
+    ) {
     }
-    return " ";
+  };
+
+  const validateMovie = (key: string, value: string) => {
+    //
+    switch (key) {
+      case "title":
+        setMovie((pre) => {
+          return {
+            ...pre,
+            title: value.trim(),
+          };
+        });
+
+        break;
+      case "rating":
+        console.log(typeof Number(value));
+        setMovie((pre) => {
+          return {
+            ...pre,
+            rating: value.trim(),
+          };
+        });
+
+        setErrArr((pre: any) => {
+          if (!/^[1-9]\d*(\.\d+)?$/.test(value)) {
+            return { ...pre, rating: `Invalid Input` };
+          } else if (Number(value) > 5) {
+            return { ...pre, rating: "not greater than 5" };
+          } else {
+            return { ...pre, rating: "" };
+          }
+        });
+
+        break;
+
+      case "year":
+        setMovie((pre) => {
+          return {
+            ...pre,
+            year: value.trim(),
+          };
+        });
+        setErrArr((pre: any) => {
+          if (!/^(19[1-9]\d|2\d{3})$/.test(value.trim() as string)) {
+            return { ...pre, year: `year must be greater than 1900` };
+          } else {
+            return { ...pre, year: "" };
+          }
+        });
+        break;
+      case "review":
+        setMovie((pre) => {
+          return {
+            ...pre,
+            review: value.trim(),
+          };
+        });
+        break;
+      case "dirname":
+        setMovie((pre) => {
+          return {
+            ...pre,
+            dirname: value.trim(),
+          };
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   return (
     <FormLayout>
       <Stack spacing={2}>
-        <Stack spacing={1}>
-          {!next ? (
-            <>
-              <TextField
-                variant="standard"
-                label="title"
-                name="title"
-                required
-                value={movie.title}
-                helperText={helpTextFunc(movie.title)}
-                onChange={handleChange}
-              />
-              <TextField
-                variant="standard"
-                label="review"
-                name="review"
-                required
-                value={movie.review}
-                helperText={helpTextFunc(movie.review)}
-                onChange={handleChange}
-              />
-              <TextField
-                variant="standard"
-                label="rating"
-                name="rating"
-                required
-                type="number"
-                value={!movie.rating ? "" : movie.rating}
-                helperText={helpTextFunc(Number(movie.rating), "rating")}
-                onChange={handleChange}
-              />
-              <TextField
-                variant="standard"
-                label="released year"
-                name="year"
-                type="number"
-                required
-                value={!movie.year ? "" : movie.year}
-                helperText={helpTextFunc(Number(movie.year), "year")}
-                onChange={handleChange}
-              />
-            </>
-          ) : (
-            <>
-              <TextField
-                variant="standard"
-                label="director name"
-                name="name"
-                required
-                value={movie.director.name}
-                helperText={helpTextFunc(movie.director.name)}
-                onChange={handleChange}
-              />
-              <TextField
-                variant="standard"
-                label="director ph"
-                name="phoneNo"
-                type="number"
-                value={movie.director.phoneNo}
-                helperText={helpTextFunc(movie.director.phoneNo, "phoneNo")}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  /^0|[1-9]\d*$/.test(e.target.value) && handleChange(e)
-                }
-              />
-              <TextField
-                variant="standard"
-                label="director gender"
-                name="gender"
-                value={movie.director.gender}
-                helperText={helpTextFunc(movie.director.gender)}
-                onChange={handleChange}
-                select
-              >
-                <MenuItem value="male">Male</MenuItem>
-                <MenuItem value="female">Female</MenuItem>
-              </TextField>
-            </>
-          )}
-        </Stack>
-        <Stack direction="row-reverse">
-          {!next ? (
-            <IconButton
-              aria-label="next"
-              onClick={() => setNext(true)}
-              size="small"
-            >
-              <ArrowForwardIcon />
-            </IconButton>
-          ) : (
-            <Stack
-              width="100%"
-              direction={"row"}
-              justifyContent="space-between"
-            >
-              <IconButton
-                aria-label="goback"
-                onClick={() => setNext(false)}
-                size="small"
-              >
-                <ArrowBackIcon />
+        <form onSubmit={(e) => handleSubmitted(e)}>
+          <Stack>
+            {!next ? (
+              <>
+                <TextField
+                  variant="standard"
+                  label="title"
+                  name="title"
+                  required
+                  value={movie.title}
+                  helperText={errArr.title !== "" ? errArr.title : " "}
+                  onBlur={(e) => validateMovie("title", e.target.value)}
+                  onChange={handleChange}
+                />
+
+                <TextField
+                  error={errArr.rating ? true : false}
+                  variant="standard"
+                  label="rating"
+                  name="rating"
+                  required
+                  value={!movie.rating ? "" : movie.rating}
+                  helperText={
+                    !movie.rating
+                      ? `Please rate 1 to 5`
+                      : errArr.rating !== ""
+                      ? errArr.rating
+                      : " "
+                  }
+                  onBlur={(e) => validateMovie("rating", e.target.value)}
+                  onChange={handleChange}
+                />
+                <TextField
+                  sx={{ mb: 1 }}
+                  error={errArr.year ? true : false}
+                  variant="standard"
+                  label="released year"
+                  name="year"
+                  required
+                  value={!movie.year ? "" : movie.year}
+                  onChange={handleChange}
+                  helperText={errArr.year !== "" ? errArr.year : " "}
+                  onBlur={(e) => validateMovie("year", e.target.value)}
+                />
+                <TextField
+                  variant="outlined"
+                  placeholder="please provide short and sweet review"
+                  name="review"
+                  multiline
+                  rows={3}
+                  required
+                  value={movie.review}
+                  onChange={handleChange}
+                  helperText={errArr.review !== "" ? errArr.review : " "}
+                  onBlur={(e) => validateMovie("review", e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <TextField
+                  variant="standard"
+                  label="genres"
+                  name="genres"
+                  value={movie.genres}
+                  onChange={handleChange}
+                  helperText={" "}
+                  select
+                  SelectProps={{ multiple: true }}
+                >
+                  {movieGenres.map((el) => {
+                    return (
+                      <MenuItem key={el} value={el}>
+                        {el}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
+                <TextField
+                  required
+                  variant="standard"
+                  label="director name"
+                  name="dirname"
+                  value={movie.dirname}
+                  helperText={errArr.dirname !== "" ? errArr.dirname : " "}
+                  onChange={handleChange}
+                  onBlur={(e) => validateMovie("dirname", e.target.value)}
+                />
+                <TextField
+                  variant="standard"
+                  label="director gender"
+                  name="dirgender"
+                  value={movie.dirgender}
+                  helperText={errArr.dirgender !== "" ? errArr.dirgender : " "}
+                  onChange={handleChange}
+                  select
+                >
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                </TextField>
+              </>
+            )}
+          </Stack>
+          <Stack direction="row-reverse">
+            {!next ? (
+              <IconButton aria-label="next" size="small" type="submit">
+                <ArrowForwardIcon />
               </IconButton>
-              <Button
-                disabled={validate(movie) && token.tokenStr ? false : true}
-                onClick={handleSubmit}
-                size="small"
-                variant="contained"
+            ) : (
+              <Stack
+                width="100%"
+                direction={"row"}
+                justifyContent="space-between"
               >
-                {isLoad ? "Loading" : "Submit"}
-              </Button>
-            </Stack>
-          )}
-        </Stack>
+                <IconButton
+                  aria-label="goback"
+                  onClick={() => setNext(false)}
+                  size="small"
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                <Button size="small" variant="contained" type="submit">
+                  {isLoad ? "Loading" : "Submit"}
+                </Button>
+              </Stack>
+            )}
+          </Stack>
+        </form>
         {!token.tokenStr && next && (
           <small style={{ textAlign: "right" }}>Please Login</small>
         )}

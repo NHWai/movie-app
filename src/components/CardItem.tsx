@@ -12,11 +12,11 @@ import { useNavigate } from "react-router-dom";
 import { MyContext } from "./MyProvider";
 
 type PropsCardItem = {
-  year: number;
+  year: number | string;
   title: string;
   directorname: string;
   review: string;
-  rating: number;
+  rating: number | string;
   movieid: string;
   user: string;
   setMovId: React.Dispatch<React.SetStateAction<string>>;

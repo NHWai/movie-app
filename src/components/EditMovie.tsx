@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { initialMovie, MovieType } from "./AddMovie";
+import { initialMovie, movieGenres, MovieType } from "./AddMovie";
 import { FormLayout } from "./FormLayout";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -87,7 +87,7 @@ export const EditMovie = () => {
     const testObj = { ...clonedMovie, ...dirObj };
     for (let key in testObj) {
       if (typeof testObj[key] === "string") {
-        if (key !== "phoneNo" && testObj[key].trim() === "") {
+        if (testObj[key].trim() === "") {
           error[key] = `can't be empty`;
         }
       } else if (typeof testObj[key] === "number") {
@@ -100,7 +100,9 @@ export const EditMovie = () => {
         }
       }
     }
+
     console.log(error);
+
     if (!Object.keys(error).length) {
       setSubmitFail(false);
       return true;
@@ -198,15 +200,18 @@ export const EditMovie = () => {
                   helperText={!errObj.name ? " " : errObj.name}
                 />
                 <TextField
-                  label="director phoneNo"
-                  name="phoneNo"
                   variant="standard"
-                  value={editMovie.director.phoneNo}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    /^0|[1-9]\d*$/.test(e.target.value) && handleChange(e)
-                  }
-                  helperText={!errObj.phoneNo ? " " : errObj.phoneNo}
-                />
+                  label="director gender"
+                  name="genres"
+                  value={editMovie.genres}
+                  onChange={handleChange}
+                  helperText={!errObj.genres ? " " : errObj.genres}
+                  select
+                >
+                  {movieGenres.map((el) => {
+                    return <MenuItem value={el}>{el}</MenuItem>;
+                  })}
+                </TextField>
                 <TextField
                   required
                   select

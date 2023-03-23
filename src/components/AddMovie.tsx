@@ -1,10 +1,4 @@
-import {
-  Button,
-  MenuItem,
-  Stack,
-  TextareaAutosize,
-  TextField,
-} from "@mui/material";
+import { Button, MenuItem, Stack, TextField } from "@mui/material";
 import React from "react";
 import { FormLayout } from "./FormLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -37,6 +31,26 @@ type MovieProps = {
   review: string;
   year: string;
   [key: string]: string | string[];
+};
+
+type ErrArr = {
+  title: string | undefined;
+  dirname: string | undefined;
+  dirgender: string | undefined;
+  genres: string | undefined;
+  rating: string | undefined;
+  review: string | undefined;
+  year: string | undefined;
+};
+
+const initialErrArr: ErrArr = {
+  title: undefined,
+  dirname: undefined,
+  dirgender: undefined,
+  genres: undefined,
+  rating: undefined,
+  review: undefined,
+  year: undefined,
 };
 
 export const initialMovie: MovieType = {
@@ -86,7 +100,13 @@ export const AddMovie = () => {
   const { token } = React.useContext(MyContext);
   const navigate = useNavigate();
   const [isLoad, setIsLoad] = React.useState(false);
-  const [errArr, setErrArr] = React.useState<MovieProps>(initialMovieProps);
+  const [errArr, setErrArr] = React.useState<ErrArr>(initialErrArr);
+
+  React.useEffect(() => {
+    if (!token.tokenStr) {
+      navigate("/login");
+    }
+  }, [token.tokenStr, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //if it is array
@@ -115,19 +135,25 @@ export const AddMovie = () => {
 
   const handleSubmitted = (e: any) => {
     e.preventDefault();
-
     if (!errArr.title && !errArr.rating && !errArr.review && !errArr.year) {
       setNext(true);
     }
-    if (
-      !errArr.title &&
-      !errArr.rating &&
-      !errArr.review &&
-      !errArr.year &&
-      !errArr.genres &&
-      !errArr.dirname &&
-      !errArr.dirgender
-    ) {
+
+    if (Object.values(errArr).every((el) => el === "")) {
+      setIsLoad(true);
+      const clonedMovie = JSON.parse(JSON.stringify(movie));
+      const formData: MovieType = {
+        title: clonedMovie.title,
+        director: {
+          name: clonedMovie.dirname,
+          gender: clonedMovie.dirgender,
+        },
+        genres: clonedMovie.genres,
+        rating: clonedMovie.rating,
+        review: clonedMovie.review,
+        year: clonedMovie.year,
+      };
+      token.tokenStr && newMovie(formData);
     }
   };
 
@@ -141,10 +167,16 @@ export const AddMovie = () => {
             title: value.trim(),
           };
         });
+        setErrArr((pre: any) => {
+          if (value === "") {
+            return { ...pre, title: `can't be empty` };
+          } else {
+            return { ...pre, title: "" };
+          }
+        });
 
         break;
       case "rating":
-        console.log(typeof Number(value));
         setMovie((pre) => {
           return {
             ...pre,
@@ -173,7 +205,7 @@ export const AddMovie = () => {
         });
         setErrArr((pre: any) => {
           if (!/^(19[1-9]\d|2\d{3})$/.test(value.trim() as string)) {
-            return { ...pre, year: `year must be greater than 1900` };
+            return { ...pre, year: `year must be greater than 1910` };
           } else {
             return { ...pre, year: "" };
           }
@@ -186,6 +218,22 @@ export const AddMovie = () => {
             review: value.trim(),
           };
         });
+        setErrArr((pre: any) => {
+          if (value === "") {
+            return { ...pre, review: `can't be empty` };
+          } else {
+            return { ...pre, review: "" };
+          }
+        });
+        break;
+      case "genres":
+        setErrArr((pre) => {
+          if (value.length === 0) {
+            return { ...pre, genres: `can't be empty` };
+          } else {
+            return { ...pre, genres: "" };
+          }
+        });
         break;
       case "dirname":
         setMovie((pre) => {
@@ -194,20 +242,61 @@ export const AddMovie = () => {
             dirname: value.trim(),
           };
         });
+        setErrArr((pre: any) => {
+          if (value === "") {
+            return { ...pre, dirname: `can't be empty` };
+          } else {
+            return { ...pre, dirname: "" };
+          }
+        });
+        break;
+      case "dirgender":
+        setErrArr((pre: any) => {
+          if (value === "") {
+            return { ...pre, dirgender: `can't be empty` };
+          } else {
+            return { ...pre, dirgender: "" };
+          }
+        });
         break;
       default:
         break;
     }
   };
 
+  const newMovie = async (movie: MovieType) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
+    myHeaders.append("Content-Type", "application/json");
+    const raw = JSON.stringify(movie);
+    const url = `${process.env.REACT_APP_BASE_URL}/movies`;
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      });
+      // const data = await res.json();
+      if (res.status === 201) {
+        navigate("/");
+      } else {
+        throw Error("cannot create the movie");
+      }
+    } catch (err) {
+      navigate(`/error/${err}`);
+    }
+  };
+
   return (
     <FormLayout>
-      <Stack spacing={2}>
+      <Stack>
         <form onSubmit={(e) => handleSubmitted(e)}>
-          <Stack>
+          <Stack spacing={1} sx={{ mb: 2 }}>
             {!next ? (
               <>
                 <TextField
+                  error={errArr.title ? true : false}
                   variant="standard"
                   label="title"
                   name="title"
@@ -236,7 +325,7 @@ export const AddMovie = () => {
                   onChange={handleChange}
                 />
                 <TextField
-                  sx={{ mb: 1 }}
+                  style={{ marginBottom: "1rem" }}
                   error={errArr.year ? true : false}
                   variant="standard"
                   label="released year"
@@ -248,6 +337,7 @@ export const AddMovie = () => {
                   onBlur={(e) => validateMovie("year", e.target.value)}
                 />
                 <TextField
+                  error={errArr.review ? true : false}
                   variant="outlined"
                   placeholder="please provide short and sweet review"
                   name="review"
@@ -263,12 +353,13 @@ export const AddMovie = () => {
             ) : (
               <>
                 <TextField
+                  error={errArr.genres ? true : false}
                   variant="standard"
                   label="genres"
                   name="genres"
                   value={movie.genres}
                   onChange={handleChange}
-                  helperText={" "}
+                  onBlur={(e) => validateMovie("genres", e.target.value)}
                   select
                   SelectProps={{ multiple: true }}
                 >
@@ -281,6 +372,7 @@ export const AddMovie = () => {
                   })}
                 </TextField>
                 <TextField
+                  error={errArr.dirname ? true : false}
                   required
                   variant="standard"
                   label="director name"
@@ -291,12 +383,14 @@ export const AddMovie = () => {
                   onBlur={(e) => validateMovie("dirname", e.target.value)}
                 />
                 <TextField
+                  error={errArr.dirgender ? true : false}
                   variant="standard"
                   label="director gender"
                   name="dirgender"
                   value={movie.dirgender}
                   helperText={errArr.dirgender !== "" ? errArr.dirgender : " "}
                   onChange={handleChange}
+                  onBlur={(e) => validateMovie("dirgender", e.target.value)}
                   select
                 >
                   <MenuItem value="male">Male</MenuItem>

@@ -1,8 +1,9 @@
 import { Button, Stack, TextField } from "@mui/material";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FormLayout } from "./FormLayout";
-import { MyContext } from "./MyProvider";
+import { FormLayout } from "../components/FormLayout";
+import { MyContext } from "../components/MyProvider";
+
 type AddCastType = {
   [key: string]: string;
 };

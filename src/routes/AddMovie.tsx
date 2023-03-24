@@ -1,18 +1,20 @@
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
 import React from "react";
-import { FormLayout } from "./FormLayout";
+
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { MyContext } from "./MyProvider";
-import { useNavigate } from "react-router-dom";
 
-export type DirectorType = {
+import { useNavigate } from "react-router-dom";
+import { FormLayout } from "../components/FormLayout";
+import { MyContext } from "../components/MyProvider";
+
+export interface DirectorType {
   name: string;
   gender: string;
-};
+}
 
-export type MovieType = {
+export interface MovieType {
   title: "";
   director: DirectorType;
   genres: string[];
@@ -20,9 +22,9 @@ export type MovieType = {
   review: string;
   year: number | string;
   [key: string]: string | number | DirectorType | string[];
-};
+}
 
-type MovieProps = {
+export interface MovieProps {
   title: string;
   dirname: string;
   dirgender: string;
@@ -31,9 +33,9 @@ type MovieProps = {
   review: string;
   year: string;
   [key: string]: string | string[];
-};
+}
 
-type ErrArr = {
+export interface ErrArr {
   title: string | undefined;
   dirname: string | undefined;
   dirgender: string | undefined;
@@ -41,9 +43,9 @@ type ErrArr = {
   rating: string | undefined;
   review: string | undefined;
   year: string | undefined;
-};
+}
 
-const initialErrArr: ErrArr = {
+export const initialErrArr: ErrArr = {
   title: undefined,
   dirname: undefined,
   dirgender: undefined,
@@ -135,11 +137,12 @@ export const AddMovie = () => {
 
   const handleSubmitted = (e: any) => {
     e.preventDefault();
+    console.log({ errArr });
     if (!errArr.title && !errArr.rating && !errArr.review && !errArr.year) {
       setNext(true);
     }
 
-    if (Object.values(errArr).every((el) => el === "")) {
+    if (Object.values(errArr).every((el) => el === "") && next) {
       setIsLoad(true);
       const clonedMovie = JSON.parse(JSON.stringify(movie));
       const formData: MovieType = {
@@ -153,6 +156,7 @@ export const AddMovie = () => {
         review: clonedMovie.review,
         year: clonedMovie.year,
       };
+      // console.log(formData);
       token.tokenStr && newMovie(formData);
     }
   };
@@ -215,12 +219,14 @@ export const AddMovie = () => {
         setMovie((pre) => {
           return {
             ...pre,
-            review: value.trim(),
+            review: value.slice(0, 60).trim(),
           };
         });
         setErrArr((pre: any) => {
           if (value === "") {
             return { ...pre, review: `can't be empty` };
+          } else if (value.length > 60) {
+            return { ...pre, review: "too much characters" };
           } else {
             return { ...pre, review: "" };
           }
@@ -302,7 +308,7 @@ export const AddMovie = () => {
                   name="title"
                   required
                   value={movie.title}
-                  helperText={errArr.title !== "" ? errArr.title : " "}
+                  helperText={errArr.title !== "" ? errArr.title : null}
                   onBlur={(e) => validateMovie("title", e.target.value)}
                   onChange={handleChange}
                 />
@@ -319,7 +325,7 @@ export const AddMovie = () => {
                       ? `Please rate 1 to 5`
                       : errArr.rating !== ""
                       ? errArr.rating
-                      : " "
+                      : null
                   }
                   onBlur={(e) => validateMovie("rating", e.target.value)}
                   onChange={handleChange}
@@ -333,7 +339,7 @@ export const AddMovie = () => {
                   required
                   value={!movie.year ? "" : movie.year}
                   onChange={handleChange}
-                  helperText={errArr.year !== "" ? errArr.year : " "}
+                  helperText={errArr.year !== "" ? errArr.year : null}
                   onBlur={(e) => validateMovie("year", e.target.value)}
                 />
                 <TextField
@@ -346,7 +352,7 @@ export const AddMovie = () => {
                   required
                   value={movie.review}
                   onChange={handleChange}
-                  helperText={errArr.review !== "" ? errArr.review : " "}
+                  helperText={errArr.review !== "" ? errArr.review : null}
                   onBlur={(e) => validateMovie("review", e.target.value)}
                 />
               </>
@@ -378,7 +384,7 @@ export const AddMovie = () => {
                   label="director name"
                   name="dirname"
                   value={movie.dirname}
-                  helperText={errArr.dirname !== "" ? errArr.dirname : " "}
+                  helperText={errArr.dirname !== "" ? errArr.dirname : null}
                   onChange={handleChange}
                   onBlur={(e) => validateMovie("dirname", e.target.value)}
                 />
@@ -388,7 +394,7 @@ export const AddMovie = () => {
                   label="director gender"
                   name="dirgender"
                   value={movie.dirgender}
-                  helperText={errArr.dirgender !== "" ? errArr.dirgender : " "}
+                  helperText={errArr.dirgender !== "" ? errArr.dirgender : null}
                   onChange={handleChange}
                   onBlur={(e) => validateMovie("dirgender", e.target.value)}
                   select

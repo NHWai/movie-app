@@ -1,11 +1,12 @@
 import { Grid, Stack, Typography, Button } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CardItem } from "./CardItem";
-import { MuiLayout } from "./MuiLayout";
+
 import AddIcon from "@mui/icons-material/Add";
 import { MovieType } from "./AddMovie";
-import { MyContext } from "./MyProvider";
+import { CardItem } from "../components/CardItem";
+import { MuiLayout } from "../components/MuiLayout";
+import { MyContext } from "../components/MyProvider";
 
 export type MovielistType = MovieType & {
   _id: string;
@@ -41,7 +42,6 @@ export const Home = () => {
         navigate(`/error/${err}`);
       }
     };
-    console.log("get new movies");
     getMovies();
   }, [navigate]);
 
@@ -76,31 +76,28 @@ export const Home = () => {
       <Grid container spacing={2} rowSpacing={3}>
         {token.tokenStr && (
           <Grid item xs={12}>
-            <Stack height={50}>
-              <Button
-                onClick={() => navigate("/create")}
-                sx={{
-                  width: "fit-content",
-                  size: { xs: "small", sm: "large" },
-                }}
-                variant="contained"
-                color="success"
-                endIcon={<AddIcon fontSize="inherit" />}
-              >
-                Create
-              </Button>
-            </Stack>
+            <Button
+              onClick={() => navigate("/create")}
+              sx={{
+                width: "fit-content",
+              }}
+              variant="contained"
+              color="success"
+              endIcon={<AddIcon fontSize="inherit" />}
+            >
+              Create
+            </Button>
           </Grid>
         )}
         {movieList?.map((el) => {
-          const { rating, review, year, title, director, _id: id, user } = el;
+          const { rating, genres, year, title, director, _id: id, user } = el;
           return (
             <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
               <CardItem
                 movieid={id}
                 directorname={director.name}
                 year={year}
-                review={review}
+                genres={genres}
                 rating={rating}
                 title={title}
                 user={user}

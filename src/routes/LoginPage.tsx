@@ -13,9 +13,10 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import InputAdornment from "@mui/material/InputAdornment";
-import { MyContext } from "./MyProvider";
+
 import { useNavigate } from "react-router-dom/";
-import { FormLayout } from "./FormLayout";
+import { FormLayout } from "../components/FormLayout";
+import { MyContext } from "../components/MyProvider";
 
 type FormDataType = {
   username: string;

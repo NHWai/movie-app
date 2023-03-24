@@ -62,7 +62,7 @@ const Movie = () => {
     <Box sx={{ marginLeft: "1rem", marginY: "1rem" }}>
       {movieItem ? (
         <div>
-          <Stack>
+          <Stack p={1}>
             <IconButton
               onClick={() => navigate(-1)}
               sx={{ width: "fit-content" }}
@@ -74,7 +74,7 @@ const Movie = () => {
               flexGrow={1}
               mb="2rem"
               sx={{
-                typography: { xs: "h5", sm: "h3", lg: "h2" },
+                typography: { xs: "h4", sm: "h3", lg: "h2" },
                 fontWeight: "bold",
               }}
               align="center"
@@ -82,8 +82,18 @@ const Movie = () => {
               {movieItem?.title}
             </Typography>
           </Stack>
-          <Typography sx={{ typography: { md: "h5" } }}>
-            Directed by {movieItem?.director.name}
+          <Stack p={2} fontStyle={"italic"} mb={4} maxWidth={"280px"}>
+            <Typography variant="body1">{movieItem?.review}</Typography>
+            <Typography variant="caption" align="right">
+              Reviewed by <br />
+              Author
+            </Typography>
+          </Stack>
+          <Typography variant="subtitle1">
+            Genres: <b> {movieItem?.genres?.join(",")}</b>
+          </Typography>
+          <Typography variant="subtitle1">
+            Directed by <b> {movieItem?.director.name}</b>
           </Typography>
           <Typography variant="subtitle1" fontStyle={"italic"} mb="1rem">
             Released Date: {movieItem?.year}

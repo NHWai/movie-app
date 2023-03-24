@@ -1,12 +1,5 @@
-import {
-  CardContent,
-  Typography,
-  CardActions,
-  Button,
-  Card,
-  Box,
-  Stack,
-} from "@mui/material";
+import { Typography, Button, Stack, Grid } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "./MyProvider";
@@ -15,7 +8,7 @@ type PropsCardItem = {
   year: number | string;
   title: string;
   directorname: string;
-  review: string;
+  genres: string[];
   rating: number | string;
   movieid: string;
   user: string;
@@ -25,8 +18,7 @@ type PropsCardItem = {
 export const CardItem = (props: PropsCardItem) => {
   const { token } = React.useContext(MyContext);
   const navigate = useNavigate();
-  const { year, title, directorname, review, rating, movieid, user } = props;
-
+  const { year, title, directorname, genres, rating, movieid, user } = props;
   const delMovie = async (movieid: string, tokenstr: string) => {
     const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieid}`;
     const myHeaders = new Headers();
@@ -52,57 +44,6 @@ export const CardItem = (props: PropsCardItem) => {
     delMovie(movieid, token.tokenStr);
   };
 
-  // return (
-  //   <Card>
-  //     <CardContent>
-  //       <Typography
-  //         sx={{ fontSize: 12, fontStyle: "italic" }}
-  //         color="text.secondary"
-  //         gutterBottom
-  //       >
-  //         Released Date : {year}
-  //       </Typography>
-  //       <Typography variant="h5" component="div">
-  //         {title}
-  //       </Typography>
-  //       <Typography
-  //         sx={{ mb: 1.5, fontSize: 12, fontStyle: "italic" }}
-  //         color="text.secondary"
-  //       >
-  //         Directed by {directorname}
-  //       </Typography>
-  //       <Typography variant="body1">{review} </Typography>
-  //       <Typography variant="body2">{`"Rating:${rating}"`}</Typography>
-  //     </CardContent>
-  //     <CardActions>
-  //       <Box sx={{ display: "flex", width: "100%" }}>
-  //         <Box sx={{ flexGrow: 1 }}>
-  //           <Button onClick={() => navigate(`/movie/${movieid}`)} size="small">
-  //             See More
-  //           </Button>
-  //         </Box>
-  //         <Box>
-  //           <Button
-  //             onClick={() => navigate(`/edit/${movieid}`)}
-  //             color="success"
-  //             disabled={user === token.id ? false : true}
-  //             size="small"
-  //           >
-  //             Edit
-  //           </Button>
-  //           <Button
-  //             onClick={handleDelete}
-  //             color="error"
-  //             disabled={user === token.id ? false : true}
-  //             size="small"
-  //           >
-  //             Delete
-  //           </Button>
-  //         </Box>
-  //       </Box>
-  //     </CardActions>
-  //   </Card>
-  // );
   return (
     <Stack
       height={"270px"}
@@ -131,34 +72,38 @@ export const CardItem = (props: PropsCardItem) => {
       >
         Directed by {directorname}
       </Typography>
-      <Typography variant="body1">{review} </Typography>
-      <Typography variant="body2">{`"Rating:${rating}"`}</Typography>
-      <Box sx={{ display: "flex", width: "100%" }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Button onClick={() => navigate(`/movie/${movieid}`)} size="small">
+      <Typography variant="body2">Genres: {genres?.join(", ")} </Typography>
+      <Typography variant="caption">{`"Rating:${rating}"`}</Typography>
+      <Grid container>
+        <Grid item xs={12}>
+          <Button component={RouterLink} to={`/movie/${movieid}`} size="small">
             See More
           </Button>
-        </Box>
-
-        <Box>
-          <Button
-            onClick={() => navigate(`/edit/${movieid}`)}
-            color="success"
-            disabled={user === token.id ? false : true}
-            size="small"
-          >
-            Edit
-          </Button>
-          <Button
-            onClick={handleDelete}
-            color="error"
-            disabled={user === token.id ? false : true}
-            size="small"
-          >
-            Delete
-          </Button>
-        </Box>
-      </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Stack direction={"row"} spacing={1}>
+            <Button
+              variant="outlined"
+              color="info"
+              disabled={user === token.id ? false : true}
+              component={RouterLink}
+              to={`/edit/${movieid}`}
+              size="small"
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={handleDelete}
+              variant="outlined"
+              color="error"
+              disabled={user === token.id ? false : true}
+              size="small"
+            >
+              Delete
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
     </Stack>
   );
 };

@@ -11,16 +11,16 @@ import {
 import reportWebVitals from "./reportWebVitals";
 
 import "./App.css";
-import { LoginPage } from "./components/LoginPage";
+import { LoginPage } from "./routes/LoginPage";
 import App from "./App";
 import { MyProvider } from "./components/MyProvider";
-import Movie from "./components/Movie";
-import { Error } from "./components/Error";
+import Movie from "./routes/Movie";
+import { Error } from "./routes/Error";
 import { MuiNavbar } from "./MuiNavbar";
-import { AddCast } from "./components/AddCast";
-import { ErrorGlobal } from "./components/ErrorGlobal";
-import { AddMovie } from "./components/AddMovie";
-import { EditMovie } from "./components/EditMovie";
+import { AddCast } from "./routes/AddCast";
+import { ErrorGlobal } from "./routes/ErrorGlobal";
+import { AddMovie } from "./routes/AddMovie";
+import { EditMovie } from "./routes/EditMovie";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +32,7 @@ const router = createBrowserRouter(
       <Route path="error/:msg" element={<Error />} />
       <Route path="create" element={<AddMovie />} />
       <Route path="edit/:movieId" element={<EditMovie />} />
+
       <Route path="*" element={<ErrorGlobal />} />
     </Route>
   )

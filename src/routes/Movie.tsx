@@ -1,8 +1,9 @@
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MovielistType } from "./Home";
+import { Link as RouterLink } from "react-router-dom";
 
 type CastType = {
   _id: string;
@@ -63,13 +64,14 @@ const Movie = () => {
       {movieItem ? (
         <div>
           <Stack p={1}>
-            <IconButton
-              onClick={() => navigate(-1)}
-              sx={{ width: "fit-content" }}
-              color="inherit"
+            <Button
+              sx={{ alignSelf: "flex-start", mb: 2 }}
+              startIcon={<ArrowBackIcon />}
+              component={RouterLink}
+              to={`/`}
             >
-              <ArrowBackIcon />
-            </IconButton>
+              Main Page
+            </Button>
             <Typography
               flexGrow={1}
               mb="2rem"

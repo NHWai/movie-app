@@ -1,6 +1,8 @@
 import { Stack, TextField, MenuItem, IconButton, Button } from "@mui/material";
 import React, { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+
 import {
   ErrArr,
   initialErrArr,
@@ -13,6 +15,7 @@ import { FormLayout } from "../components/FormLayout";
 import { MyContext } from "../components/MyProvider";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { MuiLayout } from "../components/MuiLayout";
 
 export const EditMovie = () => {
   const { movieId } = useParams();
@@ -249,148 +252,158 @@ export const EditMovie = () => {
   };
 
   return (
-    <FormLayout>
-      {!editMovie ? (
-        "Loading"
-      ) : (
-        <Stack>
-          <form onSubmit={(e) => handleSubmitted(e)}>
-            <Stack spacing={1} sx={{ mb: 2 }}>
-              {!next ? (
-                <>
-                  <TextField
-                    error={errArr.title ? true : false}
-                    variant="standard"
-                    label="title"
-                    name="title"
-                    required
-                    value={editMovie.title}
-                    helperText={errArr.title !== "" ? errArr.title : null}
-                    onBlur={(e) => validateMovie("title", e.target.value)}
-                    onChange={handleChange}
-                  />
+    <MuiLayout>
+      <Button
+        sx={{ alignSelf: "flex-start", mb: 2 }}
+        startIcon={<ArrowBackIcon />}
+        component={RouterLink}
+        to={`/`}
+      >
+        Main Page
+      </Button>
+      <FormLayout>
+        {!editMovie ? (
+          "Loading"
+        ) : (
+          <Stack>
+            <form onSubmit={(e) => handleSubmitted(e)}>
+              <Stack spacing={1} sx={{ mb: 2 }}>
+                {!next ? (
+                  <>
+                    <TextField
+                      error={errArr.title ? true : false}
+                      variant="standard"
+                      label="title"
+                      name="title"
+                      required
+                      value={editMovie.title}
+                      helperText={errArr.title !== "" ? errArr.title : null}
+                      onBlur={(e) => validateMovie("title", e.target.value)}
+                      onChange={handleChange}
+                    />
 
-                  <TextField
-                    error={errArr.rating ? true : false}
-                    variant="standard"
-                    label="rating"
-                    name="rating"
-                    required
-                    value={!editMovie.rating ? "" : editMovie.rating}
-                    helperText={
-                      !editMovie.rating
-                        ? `Please rate 1 to 5`
-                        : errArr.rating !== ""
-                        ? errArr.rating
-                        : null
-                    }
-                    onBlur={(e) => validateMovie("rating", e.target.value)}
-                    onChange={handleChange}
-                  />
-                  <TextField
-                    style={{ marginBottom: "1rem" }}
-                    error={errArr.year ? true : false}
-                    variant="standard"
-                    label="released year"
-                    name="year"
-                    required
-                    value={!editMovie.year ? "" : editMovie.year}
-                    onChange={handleChange}
-                    helperText={errArr.year !== "" ? errArr.year : null}
-                    onBlur={(e) => validateMovie("year", e.target.value)}
-                  />
-                  <TextField
-                    error={errArr.review ? true : false}
-                    variant="outlined"
-                    placeholder="please provide short and sweet review"
-                    name="review"
-                    multiline
-                    rows={3}
-                    required
-                    value={editMovie.review}
-                    onChange={handleChange}
-                    helperText={errArr.review !== "" ? errArr.review : null}
-                    onBlur={(e) => validateMovie("review", e.target.value)}
-                  />
-                </>
-              ) : (
-                <>
-                  <TextField
-                    error={errArr.genres ? true : false}
-                    variant="standard"
-                    label="genres"
-                    name="genres"
-                    value={editMovie.genres}
-                    onChange={handleChange}
-                    onBlur={(e) => validateMovie("genres", e.target.value)}
-                    select
-                    SelectProps={{ multiple: true }}
-                  >
-                    {movieGenres.map((el) => {
-                      return (
-                        <MenuItem key={el} value={el}>
-                          {el}
-                        </MenuItem>
-                      );
-                    })}
-                  </TextField>
-                  <TextField
-                    error={errArr.dirname ? true : false}
-                    required
-                    variant="standard"
-                    label="director name"
-                    name="dirname"
-                    value={editMovie.dirname}
-                    helperText={errArr.dirname !== "" ? errArr.dirname : null}
-                    onChange={handleChange}
-                    onBlur={(e) => validateMovie("dirname", e.target.value)}
-                  />
-                  <TextField
-                    error={errArr.dirgender ? true : false}
-                    variant="standard"
-                    label="director gender"
-                    name="dirgender"
-                    value={editMovie.dirgender}
-                    helperText={
-                      errArr.dirgender !== "" ? errArr.dirgender : null
-                    }
-                    onChange={handleChange}
-                    onBlur={(e) => validateMovie("dirgender", e.target.value)}
-                    select
-                  >
-                    <MenuItem value="male">Male</MenuItem>
-                    <MenuItem value="female">Female</MenuItem>
-                  </TextField>
-                </>
-              )}
-            </Stack>
-            <Stack direction="row-reverse">
-              {!next ? (
-                <IconButton aria-label="next" size="small" type="submit">
-                  <ArrowForwardIcon />
-                </IconButton>
-              ) : (
-                <Stack
-                  width="100%"
-                  direction={"row"}
-                  justifyContent="space-between"
-                >
-                  <IconButton
-                    aria-label="goback"
-                    onClick={() => setNext(false)}
-                    size="small"
-                  >
-                    <ArrowBackIcon />
+                    <TextField
+                      error={errArr.rating ? true : false}
+                      variant="standard"
+                      label="rating"
+                      name="rating"
+                      required
+                      value={!editMovie.rating ? "" : editMovie.rating}
+                      helperText={
+                        !editMovie.rating
+                          ? `Please rate 1 to 5`
+                          : errArr.rating !== ""
+                          ? errArr.rating
+                          : null
+                      }
+                      onBlur={(e) => validateMovie("rating", e.target.value)}
+                      onChange={handleChange}
+                    />
+                    <TextField
+                      style={{ marginBottom: "1rem" }}
+                      error={errArr.year ? true : false}
+                      variant="standard"
+                      label="released year"
+                      name="year"
+                      required
+                      value={!editMovie.year ? "" : editMovie.year}
+                      onChange={handleChange}
+                      helperText={errArr.year !== "" ? errArr.year : null}
+                      onBlur={(e) => validateMovie("year", e.target.value)}
+                    />
+                    <TextField
+                      error={errArr.review ? true : false}
+                      variant="outlined"
+                      placeholder="please provide short and sweet review"
+                      name="review"
+                      multiline
+                      rows={3}
+                      required
+                      value={editMovie.review}
+                      onChange={handleChange}
+                      helperText={errArr.review !== "" ? errArr.review : null}
+                      onBlur={(e) => validateMovie("review", e.target.value)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <TextField
+                      error={errArr.genres ? true : false}
+                      variant="standard"
+                      label="genres"
+                      name="genres"
+                      value={editMovie.genres}
+                      onChange={handleChange}
+                      onBlur={(e) => validateMovie("genres", e.target.value)}
+                      select
+                      SelectProps={{ multiple: true }}
+                    >
+                      {movieGenres.map((el) => {
+                        return (
+                          <MenuItem key={el} value={el}>
+                            {el}
+                          </MenuItem>
+                        );
+                      })}
+                    </TextField>
+                    <TextField
+                      error={errArr.dirname ? true : false}
+                      required
+                      variant="standard"
+                      label="director name"
+                      name="dirname"
+                      value={editMovie.dirname}
+                      helperText={errArr.dirname !== "" ? errArr.dirname : null}
+                      onChange={handleChange}
+                      onBlur={(e) => validateMovie("dirname", e.target.value)}
+                    />
+                    <TextField
+                      error={errArr.dirgender ? true : false}
+                      variant="standard"
+                      label="director gender"
+                      name="dirgender"
+                      value={editMovie.dirgender}
+                      helperText={
+                        errArr.dirgender !== "" ? errArr.dirgender : null
+                      }
+                      onChange={handleChange}
+                      onBlur={(e) => validateMovie("dirgender", e.target.value)}
+                      select
+                    >
+                      <MenuItem value="male">Male</MenuItem>
+                      <MenuItem value="female">Female</MenuItem>
+                    </TextField>
+                  </>
+                )}
+              </Stack>
+              <Stack direction="row-reverse">
+                {!next ? (
+                  <IconButton aria-label="next" size="small" type="submit">
+                    <ArrowForwardIcon />
                   </IconButton>
-                  <Button size="small" variant="contained" type="submit">
-                    {isLoad ? "Loading" : "Edit"}
-                  </Button>
-                </Stack>
-              )}
-            </Stack>
-          </form>
-        </Stack>
-      )}
-    </FormLayout>
+                ) : (
+                  <Stack
+                    width="100%"
+                    direction={"row"}
+                    justifyContent="space-between"
+                  >
+                    <IconButton
+                      aria-label="goback"
+                      onClick={() => setNext(false)}
+                      size="small"
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
+                    <Button size="small" variant="contained" type="submit">
+                      {isLoad ? "Loading" : "Edit"}
+                    </Button>
+                  </Stack>
+                )}
+              </Stack>
+            </form>
+          </Stack>
+        )}
+      </FormLayout>
+    </MuiLayout>
   );
 };

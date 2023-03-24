@@ -9,7 +9,7 @@ export const MuiLayout = ({ children }: LayoutProps) => {
   return (
     <Box
       sx={{
-        minHeight: "95vh",
+        // minHeight: "95vh",
         display: "flex",
         flexDirection: "column",
         paddingY: "1rem",

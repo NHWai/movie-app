@@ -8,7 +8,7 @@ export const FormLayout = ({ children }: Props) => {
   return (
     <Box
       sx={{
-        minHeight: "80vh",
+        minHeight: "70vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

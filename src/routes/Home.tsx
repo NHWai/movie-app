@@ -1,6 +1,7 @@
 import { Grid, Stack, Typography, Button } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 import AddIcon from "@mui/icons-material/Add";
 import { MovieType } from "./AddMovie";
@@ -77,7 +78,8 @@ export const Home = () => {
         {token.tokenStr && (
           <Grid item xs={12}>
             <Button
-              onClick={() => navigate("/create")}
+              component={RouterLink}
+              to="/create"
               sx={{
                 width: "fit-content",
               }}

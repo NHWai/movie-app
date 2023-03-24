@@ -75,7 +75,6 @@ export const LoginPage = () => {
 
       const data = await res.json();
       if (res.status === 200) {
-        console.log({ data });
         setToken(data);
       } else {
         throw new Error(`${data.message}`);

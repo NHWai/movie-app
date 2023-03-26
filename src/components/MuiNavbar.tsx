@@ -1,30 +1,26 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
-import React from "react";
-import { initialToken, MyContext } from "./components/MyProvider";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { Outlet, Link as RouterLink } from "react-router-dom";
+import { initialToken, MyContext } from "./MyProvider";
 export const MuiNavbar = () => {
-  const { token, setToken } = React.useContext(MyContext);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { token, setToken } = useContext(MyContext);
 
-  const handleClick = () => {
-    if (token.tokenStr) {
-      setToken(initialToken);
-    } else {
-      navigate("/login");
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("jwt");
+    setToken(initialToken);
   };
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
             <Box sx={{ flexGrow: 1 }}>
-              <Button onClick={() => navigate("/")} color="inherit">
-                Movies{" "}
+              <Button component={RouterLink} to="/" color="inherit">
+                Movies
               </Button>
             </Box>
-            {token.username && (
+            {token.tokenStr && (
               <Typography
                 fontStyle={"italic"}
                 sx={{ mr: 2 }}
@@ -35,9 +31,14 @@ export const MuiNavbar = () => {
                 <b>{token.username}</b>
               </Typography>
             )}
-            {location["pathname"] !== "/login" && (
-              <Button onClick={handleClick} color="inherit">
-                {token.tokenStr ? "Logout" : "Login"}
+
+            {token.tokenStr ? (
+              <Button onClick={handleLogout} color="inherit">
+                Logout
+              </Button>
+            ) : (
+              <Button component={RouterLink} to="/login" color="inherit">
+                Login
               </Button>
             )}
           </Toolbar>

@@ -16,7 +16,7 @@ import App from "./App";
 import { MyProvider } from "./components/MyProvider";
 import Movie from "./routes/Movie";
 import { Error } from "./routes/Error";
-import { MuiNavbar } from "./MuiNavbar";
+import { MuiNavbar } from "./components/MuiNavbar";
 import { AddCast } from "./routes/AddCast";
 import { ErrorGlobal } from "./routes/ErrorGlobal";
 import { AddMovie } from "./routes/AddMovie";

@@ -8,6 +8,7 @@ type TokenType = {
   tokenStr: string;
   id: string;
   username: string;
+  expirationTime: string;
 };
 
 type MyContextType = {
@@ -19,6 +20,7 @@ export const initialToken = {
   tokenStr: "",
   id: "",
   username: "",
+  expirationTime: "",
 };
 
 export const MyContext = React.createContext<MyContextType>({
@@ -27,7 +29,20 @@ export const MyContext = React.createContext<MyContextType>({
 });
 
 export const MyProvider = ({ children }: Props) => {
-  const [token, setToken] = React.useState<TokenType>(initialToken);
+  let initialStateofToken = initialToken;
+  const localToken = localStorage.getItem("jwt");
+
+  //if localstorage has jwt key, check it is expired or not
+  if (localToken) {
+    const { expirationTime } = JSON.parse(localToken as string);
+    const expirationDate = new Date(expirationTime);
+    const currentDate = new Date();
+    if (expirationDate >= currentDate) {
+      initialStateofToken = JSON.parse(localToken as string);
+    }
+  }
+
+  const [token, setToken] = React.useState<TokenType>(initialStateofToken);
 
   return (
     <MyContext.Provider value={{ token, setToken }}>

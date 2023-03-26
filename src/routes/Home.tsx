@@ -15,8 +15,8 @@ export type MovielistType = MovieType & {
 };
 export const Home = () => {
   const [movieList, setmovieList] = useState<MovielistType[] | undefined>();
-  const { token } = useContext(MyContext);
   const [movId, setMovId] = useState<string>("");
+  const { token } = useContext(MyContext);
   const navigate = useNavigate();
 
   React.useEffect(() => {

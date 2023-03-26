@@ -16,30 +16,40 @@ import InputAdornment from "@mui/material/InputAdornment";
 
 import { useNavigate } from "react-router-dom/";
 import { FormLayout } from "../components/FormLayout";
-import { MyContext } from "../components/MyProvider";
+import { initialToken, MyContext } from "../components/MyProvider";
 
-type FormDataType = {
+interface FormDataType {
   username: string;
   pwd: string;
   role?: string;
-};
+}
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-
+  const { token, setToken } = useContext(MyContext);
   const [formData, setFormData] = useState({
     username: "",
     pwd: "",
     role: "",
   });
-  const { token, setToken } = useContext(MyContext);
-  const [isLoad, setIsLoad] = useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    token.tokenStr && navigate("/");
+    if (token.tokenStr) {
+      console.log("initializing...");
+      setTimeout(() => {
+        localStorage.removeItem("jwt");
+        console.log("clear jwt");
+      }, 60000 * 45);
+      navigate("/");
+    }
   }, [token, navigate]);
+
+  const setJwtToLocalStorage = (token: string) => {
+    localStorage.setItem("jwt", token);
+  };
+  const [isLoad, setIsLoad] = useState(false);
 
   const fetchToken = async (formDatas: FormDataType) => {
     const { username, pwd, role } = formDatas;
@@ -75,6 +85,7 @@ export const LoginPage = () => {
 
       const data = await res.json();
       if (res.status === 200) {
+        setJwtToLocalStorage(JSON.stringify(data));
         setToken(data);
       } else {
         throw new Error(`${data.message}`);

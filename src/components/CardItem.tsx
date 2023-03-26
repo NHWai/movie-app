@@ -1,6 +1,6 @@
 import { Typography, Button, Stack, Grid } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "./MyProvider";
 
@@ -16,8 +16,9 @@ type PropsCardItem = {
 };
 
 export const CardItem = (props: PropsCardItem) => {
-  const { token } = React.useContext(MyContext);
+  const { token } = useContext(MyContext);
   const navigate = useNavigate();
+
   const { year, title, directorname, genres, rating, movieid, user } = props;
   const delMovie = async (movieid: string, tokenstr: string) => {
     const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieid}`;
@@ -32,6 +33,8 @@ export const CardItem = (props: PropsCardItem) => {
       if (res.status === 204) {
         // add movie id to list to be hidden
         props.setMovId(movieid);
+      } else if (res.status === 401) {
+        throw Error(`Unauthorized user, login or signup`);
       } else {
         throw Error("Cannot delete the movie");
       }

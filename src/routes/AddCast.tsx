@@ -48,7 +48,6 @@ export const AddCast = () => {
       body: raw,
     });
     const data = await res.json();
-    console.log(data);
     if (res.status) {
       const movieId = data.data.movie;
       navigate(`/movie/${movieId}`);

@@ -1,5 +1,5 @@
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
@@ -99,16 +99,16 @@ export const movieGenres = [
 export const AddMovie = () => {
   const [movie, setMovie] = React.useState<MovieProps>(initialMovieProps);
   const [next, setNext] = React.useState(false);
-  const { token } = React.useContext(MyContext);
   const navigate = useNavigate();
   const [isLoad, setIsLoad] = React.useState(false);
   const [errArr, setErrArr] = React.useState<ErrArr>(initialErrArr);
+  const { token } = useContext(MyContext);
 
   React.useEffect(() => {
     if (!token.tokenStr) {
       navigate("/login");
     }
-  }, [token.tokenStr, navigate]);
+  }, [token, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //if it is array
@@ -137,7 +137,6 @@ export const AddMovie = () => {
 
   const handleSubmitted = (e: any) => {
     e.preventDefault();
-    console.log({ errArr });
     if (!errArr.title && !errArr.rating && !errArr.review && !errArr.year) {
       setNext(true);
     }
@@ -157,6 +156,7 @@ export const AddMovie = () => {
         year: clonedMovie.year,
       };
       // console.log(formData);
+
       token.tokenStr && newMovie(formData);
     }
   };
@@ -272,6 +272,7 @@ export const AddMovie = () => {
 
   const newMovie = async (movie: MovieType) => {
     const myHeaders = new Headers();
+
     myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify(movie);
@@ -430,9 +431,6 @@ export const AddMovie = () => {
             )}
           </Stack>
         </form>
-        {!token.tokenStr && next && (
-          <small style={{ textAlign: "right" }}>Please Login</small>
-        )}
       </Stack>
     </FormLayout>
   );

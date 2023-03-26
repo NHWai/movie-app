@@ -1,10 +1,10 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React, { useContext } from "react";
-import { Outlet, Link as RouterLink } from "react-router-dom";
+import { Outlet, useLocation, Link as RouterLink } from "react-router-dom";
 import { initialToken, MyContext } from "./MyProvider";
 export const MuiNavbar = () => {
   const { token, setToken } = useContext(MyContext);
-
+  const location = useLocation();
   const handleLogout = () => {
     localStorage.removeItem("jwt");
     setToken(initialToken);
@@ -36,11 +36,11 @@ export const MuiNavbar = () => {
               <Button onClick={handleLogout} color="inherit">
                 Logout
               </Button>
-            ) : (
+            ) : location.pathname !== "/login" ? (
               <Button component={RouterLink} to="/login" color="inherit">
                 Login
               </Button>
-            )}
+            ) : null}
           </Toolbar>
         </AppBar>
       </Box>

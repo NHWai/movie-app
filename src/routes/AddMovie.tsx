@@ -90,7 +90,7 @@ export const movieGenres = [
   "Mystery",
   "Musical",
   "Romance",
-  "Sci/Fi",
+  "Sci-Fi",
   "Thriller",
   "Western",
   "SitCom",

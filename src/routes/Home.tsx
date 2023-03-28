@@ -1,41 +1,45 @@
-import { Grid, Stack, Typography, Button } from "@mui/material";
+import {
+  Grid,
+  Stack,
+  Typography,
+  Button,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 
 import AddIcon from "@mui/icons-material/Add";
-import { MovieType } from "./AddMovie";
+import { movieGenres, MovieType } from "./AddMovie";
 import { CardItem } from "../components/CardItem";
 import { MuiLayout } from "../components/MuiLayout";
 import { MyContext } from "../components/MyProvider";
+import Box from "@mui/system/Box";
 
 export type MovielistType = MovieType & {
   _id: string;
   user: string;
 };
 export const Home = () => {
-  const [movieList, setmovieList] = useState<MovielistType[] | undefined>();
+  const [movieList, setmovieList] = useState<MovielistType[] | null>();
   const [movId, setMovId] = useState<string>("");
-  const { token } = useContext(MyContext);
+  const [genre, setGenre] = React.useState<string | null>(null);
+  const { token, navBarGenre } = useContext(MyContext);
+
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    setmovieList((pre) => pre?.filter((el) => el._id !== movId));
-  }, [movId]);
-
-  React.useEffect(() => {
-    const getMovies = async () => {
-      const endpoint = `${process.env.REACT_APP_BASE_URL}/movies`;
-
+    const getMoviesByGenre = async (movieGenre: string) => {
+      const endpoint = `${process.env.REACT_APP_BASE_URL}/movies/genre/${movieGenre}`;
       try {
         const res = await fetch(endpoint, {
           method: "GET",
           redirect: "follow",
         });
-        const { data } = await res.json();
-
+        const data = await res.json();
         if (res.status === 200) {
-          setmovieList(data);
+          setmovieList(data.data);
         } else {
           throw new Error(`${data.message}`);
         }
@@ -43,8 +47,42 @@ export const Home = () => {
         navigate(`/error/${err}`);
       }
     };
+    if (genre) {
+      getMoviesByGenre(genre);
+    } else if (navBarGenre) {
+      getMoviesByGenre(navBarGenre);
+    } else {
+      getMovies();
+    }
+  }, [genre, navigate, navBarGenre]);
+
+  React.useEffect(() => {
+    setmovieList((pre) => pre?.filter((el) => el._id !== movId));
+  }, [movId]);
+
+  React.useEffect(() => {
     getMovies();
-  }, [navigate]);
+  }, []);
+
+  const getMovies = async () => {
+    const endpoint = `${process.env.REACT_APP_BASE_URL}/movies`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "GET",
+        redirect: "follow",
+      });
+      const { data } = await res.json();
+
+      if (res.status === 200) {
+        setmovieList(data);
+      } else {
+        throw new Error(`${data.message}`);
+      }
+    } catch (err) {
+      navigate(`/error/${err}`);
+    }
+  };
 
   return (
     <MuiLayout>
@@ -55,6 +93,38 @@ export const Home = () => {
       >
         All Movies
       </Typography>
+
+      <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2, mb: 4 }}>
+        {token.tokenStr && (
+          <div>
+            <Button
+              component={RouterLink}
+              to="/create"
+              sx={{
+                width: "fit-content",
+              }}
+              variant="contained"
+              color="success"
+              endIcon={<AddIcon fontSize="inherit" />}
+            >
+              Create
+            </Button>
+          </div>
+        )}
+        <Autocomplete
+          value={genre}
+          onChange={(event: any, newValue: string | null) => {
+            setGenre(newValue);
+          }}
+          size="small"
+          disablePortal
+          options={movieGenres}
+          sx={{ width: 300 }}
+          renderInput={(params) => (
+            <TextField {...params} label="Search by genres" />
+          )}
+        />
+      </Box>
 
       {movieList?.length === 0 && (
         <Stack
@@ -74,23 +144,16 @@ export const Home = () => {
           Loading
         </Stack>
       )}
+      {navBarGenre && (
+        <Typography
+          variant="caption"
+          fontStyle={"italic"}
+          sx={{ dispaly: { xs: "block", sm: "none" } }}
+        >
+          Genre:<b> {navBarGenre} </b>
+        </Typography>
+      )}
       <Grid container spacing={2} rowSpacing={3}>
-        {token.tokenStr && (
-          <Grid item xs={12}>
-            <Button
-              component={RouterLink}
-              to="/create"
-              sx={{
-                width: "fit-content",
-              }}
-              variant="contained"
-              color="success"
-              endIcon={<AddIcon fontSize="inherit" />}
-            >
-              Create
-            </Button>
-          </Grid>
-        )}
         {movieList?.map((el) => {
           const { rating, genres, year, title, director, _id: id, user } = el;
           return (

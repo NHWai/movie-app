@@ -16,7 +16,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 
 import { useNavigate } from "react-router-dom/";
 import { FormLayout } from "../components/FormLayout";
-import { initialToken, MyContext } from "../components/MyProvider";
+import { MyContext } from "../components/MyProvider";
 
 interface FormDataType {
   username: string;
@@ -29,6 +29,11 @@ export const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(false);
   const { token, setToken } = useContext(MyContext);
   const [formData, setFormData] = useState({
+    username: "",
+    pwd: "",
+    role: "",
+  });
+  const [errMsg, setErrMsg] = useState({
     username: "",
     pwd: "",
     role: "",
@@ -95,131 +100,170 @@ export const LoginPage = () => {
     }
   };
 
-  const validate = (str: string) => {
-    if (!str.length || str.length < 6) {
-      return false;
+  const validate = (inputName: string, inputVal: string) => {
+    let error = "";
+    switch (inputName) {
+      case "username":
+        if (!inputVal.length) {
+          error = `can't be empty`;
+        } else if (inputVal.length < 6) {
+          error = `must be at least 7 characters`;
+        }
+        setErrMsg((pre) => {
+          return {
+            ...pre,
+            username: error,
+          };
+        });
+        break;
+      case "pwd":
+        if (!inputVal.length) {
+          error = `can't be empty`;
+        } else if (inputVal.length < 6) {
+          error = `must be at least 7 characters`;
+        }
+        setErrMsg((pre) => {
+          return {
+            ...pre,
+            pwd: error,
+          };
+        });
+        break;
+      case "role":
+        if (!inputVal.length) {
+          error = `can't be empty`;
+        }
+        setErrMsg((pre) => {
+          return {
+            ...pre,
+            role: error,
+          };
+        });
+        break;
+
+      default:
+        break;
     }
-    return true;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((obj) => {
+      return {
+        ...obj,
+        [e.target.name]: e.target.value,
+      };
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoad(true);
+    if (Object.values(errMsg).every((el) => el === "")) {
+      fetchToken(formData);
+    } else {
+      setIsLoad(false);
+    }
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    setErrMsg((pre) => {
+      return {
+        ...pre,
+        [e.target.name]: "",
+      };
+    });
   };
 
   return (
     <FormLayout>
       <Stack spacing={2}>
-        <Stack spacing={1} direction="column">
-          <TextField
-            label="username"
-            variant="standard"
-            required
-            value={formData.username}
-            helperText={
-              !formData.username
-                ? "required"
-                : formData.username.length < 6
-                ? "Must be at least 7 characters"
-                : " "
-            }
-            onChange={(e) => {
-              setFormData((obj) => {
-                return {
-                  ...obj,
-                  username: e.target.value,
-                };
-              });
-            }}
-          />
-          <FormControl variant="standard">
-            <InputLabel htmlFor="standard-adornment-password" required>
-              Password
-            </InputLabel>
-            <Input
-              id="standard-adornment-password"
-              type={showPassword ? "text" : "password"}
-              value={formData.pwd}
-              onChange={(e) => {
-                setFormData((obj) => {
-                  return {
-                    ...obj,
-                    pwd: e.target.value,
-                  };
-                });
-              }}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword((show) => !show)}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            <FormHelperText sx={{ height: "1.8rem" }}>
-              {!formData.pwd
-                ? "provide password"
-                : formData.pwd.length < 6
-                ? "Must be at least 7 characters"
-                : "Do not share your password with others "}
-            </FormHelperText>
-          </FormControl>
-          {isLogin && (
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={1} direction="column">
             <TextField
-              required
-              fullWidth
               variant="standard"
-              select
-              label="select role"
-              value={formData.role}
-              onChange={(e) =>
-                setFormData((obj) => {
-                  return {
-                    ...obj,
-                    role: e.target.value,
-                  };
-                })
-              }
-            >
-              <MenuItem value="Admin">Admin</MenuItem>
-              <MenuItem value="User">User</MenuItem>
-            </TextField>
-          )}
-        </Stack>
-
-        <Stack direction="row-reverse">
-          <Stack spacing={1} direction={"column"}>
-            <Button
-              color="primary"
-              variant="contained"
-              disabled={
-                validate(formData.username) &&
-                validate(formData.pwd) &&
-                (!isLogin || formData.role)
-                  ? false
-                  : true
-              }
-              onClick={() => {
-                setIsLoad(true);
-                fetchToken(formData);
-              }}
-            >
-              {isLoad ? "Loading" : isLogin ? "Sign Up" : "Login"}
-            </Button>
-            <Box
-              component={"button"}
-              sx={{
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-                "&:hover": {
-                  color: "primary.dark",
-                },
-              }}
-              onClick={() => setIsLogin((pre) => !pre)}
-            >
-              {isLogin ? "Login" : "Sign Up"}
-            </Box>
+              autoComplete="off"
+              required
+              label="username"
+              name="username"
+              value={formData.username}
+              error={Boolean(errMsg.username)}
+              helperText={errMsg.username}
+              onFocus={handleFocus}
+              onBlur={(e) => validate(e.target.name, e.target.value)}
+              onChange={handleChange}
+            />
+            <FormControl variant="standard">
+              <InputLabel htmlFor="standard-adornment-password" required>
+                Password
+              </InputLabel>
+              <Input
+                id="standard-adornment-password"
+                type={showPassword ? "text" : "password"}
+                name="pwd"
+                value={formData.pwd}
+                error={Boolean(errMsg.pwd)}
+                onFocus={handleFocus}
+                onBlur={(e) => validate(e.target.name, e.target.value)}
+                onChange={handleChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword((show) => !show)}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+              <FormHelperText sx={{ height: "1.8rem" }}>
+                {errMsg.pwd === ""
+                  ? "Do not share your password with others "
+                  : errMsg.pwd}
+              </FormHelperText>
+            </FormControl>
+            {isLogin && (
+              <TextField
+                required
+                fullWidth
+                variant="standard"
+                select
+                label="select role"
+                name="role"
+                value={formData.role}
+                helperText={errMsg.role || " "}
+                onFocus={handleFocus}
+                onBlur={(e) => validate(e.target.name, e.target.value)}
+                onChange={handleChange}
+              >
+                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="User">User</MenuItem>
+              </TextField>
+            )}
           </Stack>
-        </Stack>
+
+          <Stack direction="row-reverse">
+            <Stack spacing={1} direction={"column"}>
+              <Button color="primary" variant="contained" type="submit">
+                {isLoad ? "Loading" : isLogin ? "Sign Up" : "Login"}
+              </Button>
+              <Box
+                component={"button"}
+                sx={{
+                  backgroundColor: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "primary.dark",
+                  },
+                }}
+                onClick={() => setIsLogin((pre) => !pre)}
+              >
+                {isLogin ? "Login" : "Sign Up"}
+              </Box>
+            </Stack>
+          </Stack>
+        </form>
       </Stack>
     </FormLayout>
   );

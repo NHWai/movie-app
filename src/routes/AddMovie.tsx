@@ -1,4 +1,4 @@
-import { Button, MenuItem, Stack, TextField } from "@mui/material";
+import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
 import React, { useContext } from "react";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -15,7 +15,7 @@ export interface DirectorType {
 }
 
 export interface MovieType {
-  title: "";
+  title: string;
   director: DirectorType;
   genres: string[];
   rating: number | string;
@@ -43,6 +43,7 @@ export interface ErrArr {
   rating: string | undefined;
   review: string | undefined;
   year: string | undefined;
+  coverPic: string | undefined;
 }
 
 export const initialErrArr: ErrArr = {
@@ -53,6 +54,7 @@ export const initialErrArr: ErrArr = {
   rating: undefined,
   review: undefined,
   year: undefined,
+  coverPic: undefined,
 };
 
 export const initialMovie: MovieType = {
@@ -155,9 +157,22 @@ export const AddMovie = () => {
         review: clonedMovie.review,
         year: clonedMovie.year,
       };
-      // console.log(formData);
 
-      token.tokenStr && newMovie(formData);
+      const formDataObj: any = new FormData(e.target);
+      //deleting redundant keys
+      formDataObj.delete("dirname");
+      formDataObj.delete("dirgender");
+      formDataObj.delete("genres");
+
+      for (const key in formData) {
+        if (key === "director" || key === "genres") {
+          formDataObj.append(key, JSON.stringify(formData[key]));
+        } else {
+          formDataObj.append(key, formData[key]);
+        }
+      }
+
+      token.tokenStr && newMovie(formDataObj);
     }
   };
 
@@ -270,12 +285,12 @@ export const AddMovie = () => {
     }
   };
 
-  const newMovie = async (movie: MovieType) => {
+  const newMovie = async (movie: any) => {
     const myHeaders = new Headers();
 
     myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
-    myHeaders.append("Content-Type", "application/json");
-    const raw = JSON.stringify(movie);
+
+    const raw = movie;
     const url = `${process.env.REACT_APP_BASE_URL}/movies`;
     try {
       const res = await fetch(url, {
@@ -403,6 +418,30 @@ export const AddMovie = () => {
                   <MenuItem value="male">Male</MenuItem>
                   <MenuItem value="female">Female</MenuItem>
                 </TextField>
+                <br />
+                <Box
+                  sx={{
+                    maxWidth: "200px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.4rem",
+                  }}
+                >
+                  <label>Cover Image</label>
+                  <input
+                    onBlur={(e) => {
+                      if (e.target.value) {
+                        setErrArr((pre) => {
+                          return { ...pre, [e.target.name]: "" };
+                        });
+                      }
+                    }}
+                    name="coverPic"
+                    type="file"
+                    accept="image/*"
+                    required
+                  />
+                </Box>
               </>
             )}
           </Stack>

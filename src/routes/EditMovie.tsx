@@ -1,4 +1,11 @@
-import { Stack, TextField, MenuItem, IconButton, Button } from "@mui/material";
+import {
+  Stack,
+  TextField,
+  MenuItem,
+  IconButton,
+  Button,
+  Box,
+} from "@mui/material";
 import React, { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
@@ -104,19 +111,36 @@ export const EditMovie = () => {
 
     if (Object.values(errArr).every((el) => el === "") && next) {
       setIsLoad(true);
-      const clonedMovie = JSON.parse(JSON.stringify(editMovie));
-      const formData = {
-        title: clonedMovie.title,
+
+      const formData: MovieType = {
+        title: editMovie.title,
         director: {
-          name: clonedMovie.dirname,
-          gender: clonedMovie.dirgender,
+          name: editMovie.dirname,
+          gender: editMovie.dirgender,
         },
-        genres: clonedMovie.genres,
-        rating: clonedMovie.rating,
-        review: clonedMovie.review,
-        year: clonedMovie.year,
+        genres: editMovie.genres,
+        rating: editMovie.rating,
+        review: editMovie.review,
+        year: editMovie.year,
+        photoUrl: editMovie.photoUrl,
+        photoId: editMovie.photoId,
       };
-      token.tokenStr && updateMovie(formData);
+      const formDataObj: any = new FormData(e.target);
+
+      //deleting redundant keys
+      formDataObj.delete("dirname");
+      formDataObj.delete("dirgender");
+      formDataObj.delete("genres");
+
+      for (const key in formData) {
+        if (key === "director" || key === "genres") {
+          formDataObj.append(key, JSON.stringify(formData[key]));
+        } else {
+          formDataObj.append(key, formData[key]);
+        }
+      }
+
+      token.tokenStr && updateMovie(formDataObj);
     }
   };
 
@@ -222,22 +246,30 @@ export const EditMovie = () => {
           }
         });
         break;
+      case "coverPic":
+        setErrArr((pre: any) => {
+          if (value === "") {
+            return { ...pre, coverPic: `can't be empty` };
+          } else {
+            return { ...pre, coverPic: "" };
+          }
+        });
+        break;
       default:
         break;
     }
   };
 
-  const updateMovie = async (movie: MovieType) => {
+  const updateMovie = async (movie: any) => {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
-    myHeaders.append("Content-Type", "application/json");
-    const raw = JSON.stringify(movie);
+
     const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieId}`;
     try {
       const res = await fetch(url, {
         method: "PUT",
         headers: myHeaders,
-        body: raw,
+        body: movie,
         redirect: "follow",
       });
       // const data = await res.json();
@@ -373,6 +405,25 @@ export const EditMovie = () => {
                       <MenuItem value="male">Male</MenuItem>
                       <MenuItem value="female">Female</MenuItem>
                     </TextField>
+                    <br />
+                    <Box
+                      sx={{
+                        maxWidth: "200px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.4rem",
+                      }}
+                    >
+                      <label>Change Cover Image</label>
+                      <input
+                        onBlur={(e) =>
+                          validateMovie("coverPic", e.target.value)
+                        }
+                        name="coverPic"
+                        type="file"
+                        accept="image/*"
+                      />
+                    </Box>
                   </>
                 )}
               </Stack>

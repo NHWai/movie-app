@@ -20,6 +20,7 @@ import Box from "@mui/system/Box";
 export type MovielistType = MovieType & {
   _id: string;
   user: string;
+  photoUrl: string;
 };
 export const Home = () => {
   const [movieList, setmovieList] = useState<MovielistType[] | null>();
@@ -155,10 +156,20 @@ export const Home = () => {
       )}
       <Grid container spacing={2} rowSpacing={3}>
         {movieList?.map((el) => {
-          const { rating, genres, year, title, director, _id: id, user } = el;
+          const {
+            rating,
+            genres,
+            year,
+            title,
+            director,
+            _id: id,
+            user,
+            photoId,
+          } = el;
           return (
             <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
               <CardItem
+                photoId={photoId as string}
                 movieid={id}
                 directorname={director.name}
                 year={year}

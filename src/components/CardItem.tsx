@@ -11,6 +11,7 @@ type PropsCardItem = {
   genres: string[];
   rating: number | string;
   movieid: string;
+  photoId: string;
   user: string;
   setMovId: React.Dispatch<React.SetStateAction<string>>;
 };
@@ -19,9 +20,14 @@ export const CardItem = (props: PropsCardItem) => {
   const { token } = useContext(MyContext);
   const navigate = useNavigate();
 
-  const { year, title, directorname, genres, rating, movieid, user } = props;
-  const delMovie = async (movieid: string, tokenstr: string) => {
-    const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieid}`;
+  const { year, title, directorname, genres, rating, movieid, user, photoId } =
+    props;
+  const delMovie = async (
+    movieid: string,
+    tokenstr: string,
+    photoId: string
+  ) => {
+    const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieid}/photoid/${photoId}`;
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${tokenstr}`);
     try {
@@ -44,7 +50,7 @@ export const CardItem = (props: PropsCardItem) => {
   };
 
   const handleDelete = () => {
-    delMovie(movieid, token.tokenStr);
+    delMovie(movieid, token.tokenStr, photoId.slice(4));
   };
 
   return (

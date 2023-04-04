@@ -47,6 +47,7 @@ export const LoginPage = () => {
         localStorage.removeItem("jwt");
         console.log("clear jwt");
       }, 60000 * 45);
+      //navigate to home page
       navigate("/");
     }
   }, [token, navigate]);

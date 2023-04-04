@@ -15,7 +15,7 @@ type CastType = {
 const Movie = () => {
   let { id } = useParams();
   const [movieItem, setMovieItem] = useState<MovielistType>();
-  const [casts, setCasts] = useState<CastType>();
+  const [casts, setCasts] = useState<CastType[]>([]);
 
   const navigate = useNavigate();
 
@@ -45,11 +45,13 @@ const Movie = () => {
     };
     const getData = async (id: string) => {
       try {
+        //fetching movie
         const fetchMovie = await fetchData(url, id, setMovieItem);
         if (!fetchMovie) {
           throw Error("failed to fetch movie");
         }
 
+        //fetching casts
         fetchData(url2, id, setCasts);
       } catch (err) {
         console.log({ err });
@@ -84,6 +86,13 @@ const Movie = () => {
               {movieItem?.title}
             </Typography>
           </Stack>
+          {movieItem.photoUrl && (
+            <img
+              style={{ maxWidth: "300px", height: "300px" }}
+              src={movieItem?.photoUrl}
+              alt="coverPhoto"
+            />
+          )}
           <Stack p={2} fontStyle={"italic"} mb={4} maxWidth={"280px"}>
             <Typography variant="body1">{movieItem?.review}</Typography>
             <Typography variant="caption" align="right">
@@ -100,20 +109,20 @@ const Movie = () => {
           <Typography variant="subtitle1" fontStyle={"italic"} mb="1rem">
             Released Date: {movieItem?.year}
           </Typography>
-          {casts ? (
+          {casts.length > 0 ? (
             <>
               <div>Casts :</div>
               <ul>
                 <li>
                   Protagonist:
                   <b>
-                    <i> {casts?.protagonist} </i>
+                    <i> {casts[0].protagonist} </i>
                   </b>
                 </li>
                 <li>
                   Alley/Rival:
                   <b>
-                    <i> {casts?.allie_rival} </i>{" "}
+                    <i> {casts[0].allie_rival} </i>{" "}
                   </b>
                 </li>
               </ul>

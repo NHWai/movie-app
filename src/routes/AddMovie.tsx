@@ -100,6 +100,7 @@ export const movieGenres = [
 
 export const AddMovie = () => {
   const [movie, setMovie] = React.useState<MovieProps>(initialMovieProps);
+  const [coverPicFile, setCoverPicFile] = React.useState<{} | undefined>({});
   const [next, setNext] = React.useState(false);
   const navigate = useNavigate();
   const [isLoad, setIsLoad] = React.useState(false);
@@ -111,6 +112,8 @@ export const AddMovie = () => {
       navigate("/login");
     }
   }, [token, navigate]);
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //if it is array
@@ -145,24 +148,20 @@ export const AddMovie = () => {
 
     if (Object.values(errArr).every((el) => el === "") && next) {
       setIsLoad(true);
-      const clonedMovie = JSON.parse(JSON.stringify(movie));
       const formData: MovieType = {
-        title: clonedMovie.title,
+        title: movie.title,
         director: {
-          name: clonedMovie.dirname,
-          gender: clonedMovie.dirgender,
+          name: movie.dirname,
+          gender: movie.dirgender,
         },
-        genres: clonedMovie.genres,
-        rating: clonedMovie.rating,
-        review: clonedMovie.review,
-        year: clonedMovie.year,
+        genres: movie.genres,
+        rating: movie.rating,
+        review: movie.review,
+        year: movie.year,
       };
 
-      const formDataObj: any = new FormData(e.target);
-      //deleting redundant keys
-      formDataObj.delete("dirname");
-      formDataObj.delete("dirgender");
-      formDataObj.delete("genres");
+      const formDataObj: any = new FormData();
+      formDataObj.append("coverPic", coverPicFile);
 
       for (const key in formData) {
         if (key === "director" || key === "genres") {
@@ -171,7 +170,7 @@ export const AddMovie = () => {
           formDataObj.append(key, formData[key]);
         }
       }
-
+    
       token.tokenStr && newMovie(formDataObj);
     }
   };
@@ -375,6 +374,7 @@ export const AddMovie = () => {
             ) : (
               <>
                 <TextField
+                  required
                   error={errArr.genres ? true : false}
                   variant="standard"
                   label="genres"
@@ -382,6 +382,7 @@ export const AddMovie = () => {
                   value={movie.genres}
                   onChange={handleChange}
                   onBlur={(e) => validateMovie("genres", e.target.value)}
+                  helperText={errArr.genres !== "" ? errArr.genres : null}
                   select
                   SelectProps={{ multiple: true }}
                 >
@@ -405,6 +406,7 @@ export const AddMovie = () => {
                   onBlur={(e) => validateMovie("dirname", e.target.value)}
                 />
                 <TextField
+                  required
                   error={errArr.dirgender ? true : false}
                   variant="standard"
                   label="director gender"
@@ -419,31 +421,40 @@ export const AddMovie = () => {
                   <MenuItem value="female">Female</MenuItem>
                 </TextField>
                 <br />
-                <Box
-                  sx={{
-                    maxWidth: "200px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.4rem",
-                  }}
-                >
-                  <label>Cover Image</label>
-                  <input
-                    onBlur={(e) => {
-                      if (e.target.value) {
-                        setErrArr((pre) => {
-                          return { ...pre, [e.target.name]: "" };
-                        });
-                      }
-                    }}
-                    name="coverPic"
-                    type="file"
-                    accept="image/*"
-                    required
-                  />
-                </Box>
               </>
             )}
+
+            <Box
+              sx={{
+                maxWidth: "200px",
+                display: next ? "flex" : "none",
+                flexDirection: "column",
+                gap: "0.4rem",
+              }}
+            >
+              <label>Cover Image</label>
+              <input
+                onChange={(e) => {
+                  if (e.target?.files) {
+                    setCoverPicFile(e.target.files[0]);
+                  }
+                  if (e.target.value) {
+                    setErrArr((pre) => {
+                      return { ...pre, [e.target.name]: "" };
+                    });
+                  } 
+                  else {
+                    setErrArr((pre) => {
+                      return { ...pre, [e.target.name]: undefined };
+                    });
+                  }
+                }}
+                name="coverPic"
+                type="file"
+                accept="image/jpg, image/jpeg, image/png"
+              />
+             {errArr.coverPic === undefined && <small style={{color:'red'}}>Please upload a cover picture for movie!!</small>}
+            </Box>
           </Stack>
           <Stack direction="row-reverse">
             {!next ? (

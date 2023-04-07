@@ -161,7 +161,7 @@ export const AddMovie = () => {
       };
 
       const formDataObj: any = new FormData();
-      formDataObj.append("coverPic", coverPicFile);
+      Object.keys(coverPicFile as {}).length > 0 && formDataObj.append("coverPic", coverPicFile);
 
       for (const key in formData) {
         if (key === "director" || key === "genres") {

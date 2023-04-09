@@ -161,7 +161,7 @@ export const AddMovie = () => {
       };
 
       const formDataObj: any = new FormData();
-      Object.keys(coverPicFile as {}).length > 0 && formDataObj.append("coverPic", coverPicFile);
+     formDataObj.append("coverPic", coverPicFile);
 
       for (const key in formData) {
         if (key === "director" || key === "genres") {
@@ -474,7 +474,7 @@ export const AddMovie = () => {
                 >
                   <ArrowBackIcon />
                 </IconButton>
-                <Button size="small" variant="contained" type="submit">
+                <Button size="small" variant="contained" type="submit" disabled={isLoad}>
                   {isLoad ? "Loading" : "Submit"}
                 </Button>
               </Stack>

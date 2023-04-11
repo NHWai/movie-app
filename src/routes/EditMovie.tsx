@@ -263,6 +263,7 @@ export const EditMovie = () => {
   const updateMovie = async (movie: any) => {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
+    myHeaders.append("Content-Type", `multipart/form-data`);
 
     const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieId}`;
     try {

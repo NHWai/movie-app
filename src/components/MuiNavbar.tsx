@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddIcon from "@mui/icons-material/Add";
 import MenuIcon from "@mui/icons-material/Menu";
 import React, { useContext, useState } from "react";
 import { Outlet, useLocation, Link as RouterLink } from "react-router-dom";
@@ -115,6 +116,24 @@ export const MuiNavbar = () => {
               Movie App
             </Typography>
             <Divider />
+            
+                <Button
+                  size='small'
+                  component={RouterLink}
+                  to="/create"
+                  sx={{
+                    width: "fit-content",
+                    mx:'auto',
+                    my:1
+                  }}
+                  variant="outlined"
+                  color="success"
+                  endIcon={<AddIcon fontSize="inherit" />}
+                >
+                  New Movie
+                </Button>
+             
+            {/* <Divider /> */}
             <Autocomplete
               size="small"
               disablePortal

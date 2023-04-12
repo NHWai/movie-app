@@ -116,23 +116,23 @@ export const MuiNavbar = () => {
               Movie App
             </Typography>
             <Divider />
-            
-                <Button
-                  size='small'
-                  component={RouterLink}
-                  to="/create"
-                  sx={{
-                    width: "fit-content",
-                    mx:'auto',
-                    my:1
-                  }}
-                  variant="outlined"
-                  color="success"
-                  endIcon={<AddIcon fontSize="inherit" />}
-                >
-                  New Movie
-                </Button>
-             
+
+            <Button
+              size="small"
+              component={RouterLink}
+              to="/create"
+              sx={{
+                width: "fit-content",
+                mx: "auto",
+                my: 1,
+              }}
+              variant="outlined"
+              color="success"
+              endIcon={<AddIcon fontSize="inherit" />}
+            >
+              New Movie
+            </Button>
+
             {/* <Divider /> */}
             <Autocomplete
               size="small"

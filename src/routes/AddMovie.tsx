@@ -113,8 +113,6 @@ export const AddMovie = () => {
     }
   }, [token, navigate]);
 
-
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //if it is array
     if (e.target.name === "genres") {
@@ -161,7 +159,7 @@ export const AddMovie = () => {
       };
 
       const formDataObj: any = new FormData();
-     formDataObj.append("coverPic", coverPicFile);
+      formDataObj.append("coverPic", coverPicFile);
 
       for (const key in formData) {
         if (key === "director" || key === "genres") {
@@ -170,7 +168,7 @@ export const AddMovie = () => {
           formDataObj.append(key, formData[key]);
         }
       }
-    
+
       token.tokenStr && newMovie(formDataObj);
     }
   };
@@ -298,11 +296,10 @@ export const AddMovie = () => {
         body: raw,
         redirect: "follow",
       });
-      // const data = await res.json();
       if (res.status === 201) {
         navigate("/");
-      } else {
-        throw Error("cannot create the movie");
+      } else if (res.status === 401) {
+        navigate("/login");
       }
     } catch (err) {
       navigate(`/error/${err}`);
@@ -442,8 +439,7 @@ export const AddMovie = () => {
                     setErrArr((pre) => {
                       return { ...pre, [e.target.name]: "" };
                     });
-                  } 
-                  else {
+                  } else {
                     setErrArr((pre) => {
                       return { ...pre, [e.target.name]: undefined };
                     });
@@ -453,7 +449,11 @@ export const AddMovie = () => {
                 type="file"
                 accept="image/jpg, image/jpeg, image/png"
               />
-             {errArr.coverPic === undefined && <small style={{color:'red'}}>Please upload a cover picture for movie!!</small>}
+              {errArr.coverPic === undefined && (
+                <small style={{ color: "red" }}>
+                  Please upload a cover picture for movie!!
+                </small>
+              )}
             </Box>
           </Stack>
           <Stack direction="row-reverse">
@@ -474,7 +474,12 @@ export const AddMovie = () => {
                 >
                   <ArrowBackIcon />
                 </IconButton>
-                <Button size="small" variant="contained" type="submit" disabled={isLoad}>
+                <Button
+                  size="small"
+                  variant="contained"
+                  type="submit"
+                  disabled={isLoad}
+                >
                   {isLoad ? "Loading" : "Submit"}
                 </Button>
               </Stack>

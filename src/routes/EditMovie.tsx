@@ -263,7 +263,6 @@ export const EditMovie = () => {
   const updateMovie = async (movie: any) => {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token.tokenStr}`);
-    myHeaders.append("Content-Type", `multipart/form-data`);
 
     const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieId}`;
     try {
@@ -273,7 +272,8 @@ export const EditMovie = () => {
         body: movie,
         redirect: "follow",
       });
-      // const data = await res.json();
+
+      console.log(res.status);
       if (res.status === 200) {
         navigate("/");
       } else {
@@ -289,8 +289,7 @@ export const EditMovie = () => {
       <Button
         sx={{ alignSelf: "flex-start", mb: 2 }}
         startIcon={<ArrowBackIcon />}
-        component={RouterLink}
-        to={`/`}
+        onClick={() => navigate(-1)}
       >
         Main Page
       </Button>
@@ -422,7 +421,7 @@ export const EditMovie = () => {
                         }
                         name="coverPic"
                         type="file"
-                        accept="image/*"
+                        accept="image/jpg, image/jpeg, image/png"
                       />
                     </Box>
                   </>
@@ -446,7 +445,12 @@ export const EditMovie = () => {
                     >
                       <ArrowBackIcon />
                     </IconButton>
-                    <Button size="small" variant="contained" type="submit">
+                    <Button
+                      disabled={isLoad}
+                      size="small"
+                      variant="contained"
+                      type="submit"
+                    >
                       {isLoad ? "Loading" : "Edit"}
                     </Button>
                   </Stack>

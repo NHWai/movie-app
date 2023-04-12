@@ -69,8 +69,7 @@ const Movie = () => {
             <Button
               sx={{ alignSelf: "flex-start", mb: 2 }}
               startIcon={<ArrowBackIcon />}
-              component={RouterLink}
-              to={`/`}
+              onClick={() => navigate(-1)}
             >
               Main Page
             </Button>

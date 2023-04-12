@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -62,17 +62,32 @@ const Movie = () => {
   }, [id, navigate]);
 
   return (
-    <Box sx={{ marginLeft: "1rem", marginY: "1rem" }}>
+    <Box sx={{ paddingX: 1, marginY: "1rem" }}>
       {movieItem ? (
         <div>
-          <Stack p={1}>
+          <Box
+            sx={{
+              p: { md: 1 },
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+            }}
+          >
             <Button
-              sx={{ alignSelf: "flex-start", mb: 2 }}
+              sx={{
+                position: { md: "absolute" },
+                top: 50,
+                left: 0,
+                transform: "translateY(-100%)",
+                alignSelf: "start",
+              }}
               startIcon={<ArrowBackIcon />}
               onClick={() => navigate(-1)}
             >
               Main Page
             </Button>
+
             <Typography
               flexGrow={1}
               mb="2rem"
@@ -84,7 +99,7 @@ const Movie = () => {
             >
               {movieItem?.title}
             </Typography>
-          </Stack>
+          </Box>
           {movieItem.photoUrl && (
             <img
               style={{ maxWidth: "300px", height: "300px" }}

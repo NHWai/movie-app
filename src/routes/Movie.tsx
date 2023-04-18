@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MovielistType } from "./Home";
 import { Link as RouterLink } from "react-router-dom";
+import { ReviewBox } from "../components/ReviewBox";
 
 type CastType = {
   _id: string;
@@ -64,7 +65,7 @@ const Movie = () => {
   return (
     <Box sx={{ paddingX: 1, marginY: "1rem" }}>
       {movieItem ? (
-        <div>
+        <>
           <Box
             sx={{
               p: { md: 1 },
@@ -100,56 +101,100 @@ const Movie = () => {
               {movieItem?.title}
             </Typography>
           </Box>
-          {movieItem.photoUrl && (
-            <img
-              style={{ maxWidth: "300px", height: "300px" }}
-              src={movieItem?.photoUrl}
-              alt="coverPhoto"
-            />
-          )}
-          <Stack p={2} fontStyle={"italic"} mb={4} maxWidth={"280px"}>
-            <Typography variant="body1">{movieItem?.review}</Typography>
-            <Typography variant="caption" align="right">
-              Reviewed by <br />
-              Author
-            </Typography>
-          </Stack>
-          <Typography variant="subtitle1">
-            Genres: <b> {movieItem?.genres?.join(",")}</b>
-          </Typography>
-          <Typography variant="subtitle1">
-            Directed by <b> {movieItem?.director.name}</b>
-          </Typography>
-          <Typography variant="subtitle1" fontStyle={"italic"} mb="1rem">
-            Released Date: {movieItem?.year}
-          </Typography>
-          {casts.length > 0 ? (
-            <>
-              <div>Casts :</div>
-              <ul>
-                <li>
-                  Protagonist:
-                  <b>
-                    <i> {casts[0].protagonist} </i>
-                  </b>
-                </li>
-                <li>
-                  Alley/Rival:
-                  <b>
-                    <i> {casts[0].allie_rival} </i>{" "}
-                  </b>
-                </li>
-              </ul>
-            </>
-          ) : (
-            <Button
-              onClick={() => navigate(`/cast/${movieItem._id}`)}
-              size="small"
+          <Box
+            sx={{
+              width: "fit-content",
+              maxWidth: "800px",
+              marginX: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "2rem",
+              paddingX: "20px",
+            }}
+          >
+            <Stack
+              marginX={"auto"}
+              width="fit-content"
+              direction={{ xs: "column", md: "row" }}
+              justifyContent={"start"}
+              alignItems={{ xs: "start", md: "center" }}
+              spacing={5}
             >
-              Add Cast
-            </Button>
-          )}
-        </div>
+              {movieItem.photoUrl && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: { xs: "fit-content", sm: "500px" },
+                  }}
+                >
+                  <img
+                    style={{
+                      width: "100%",
+                      maxWidth: "600px",
+                      height: "300px",
+                      borderRadius: "5px",
+                    }}
+                    src={movieItem?.photoUrl}
+                    alt="coverPhoto"
+                  />
+                </Box>
+              )}
+              <Box>
+                <div
+                  style={{
+                    borderLeft: "3px solid blue",
+                    paddingLeft: "1rem",
+                    marginLeft: "-1rem",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <Typography fontStyle={"italic"} variant="h5">
+                    Details
+                  </Typography>
+                </div>
+                <Typography variant="subtitle2" fontStyle={"italic"}>
+                  Genres: <b> {movieItem?.genres?.join(",")}</b>
+                </Typography>
+                <Typography variant="subtitle2" fontStyle={"italic"}>
+                  Directed by <b> {movieItem?.director.name}</b>
+                </Typography>
+                <Typography variant="subtitle2" fontStyle={"italic"}>
+                  Released Date: {movieItem?.year}
+                </Typography>
+                <Typography variant="subtitle2" fontStyle={"italic"}>
+                  Rating : {movieItem?.rating}
+                </Typography>
+              </Box>
+            </Stack>
+            <Stack
+              width={"100%"}
+              maxWidth={"700px"}
+              alignSelf={"start"}
+              fontStyle={"italic"}
+              mb={4}
+            >
+              <div
+                style={{
+                  borderLeft: "3px solid blue",
+                  paddingLeft: "1rem",
+                  marginLeft: "-1rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Typography variant="h5">Featured Reviews</Typography>
+              </div>
+              <ReviewBox
+                reviewText={movieItem?.review}
+                author="Original Uploader"
+              />
+              <ReviewBox
+                reviewText={movieItem?.review}
+                author="Original Uploader"
+              />
+            </Stack>
+          </Box>
+        </>
       ) : (
         <Stack minHeight={"50vh"} justifyContent="center" alignItems={"center"}>
           Loading

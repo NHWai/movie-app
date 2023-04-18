@@ -245,7 +245,12 @@ export const LoginPage = () => {
 
           <Stack direction="row-reverse">
             <Stack spacing={1} direction={"column"}>
-              <Button color="primary" variant="contained" type="submit">
+              <Button
+                disabled={isLoad}
+                color="primary"
+                variant="contained"
+                type="submit"
+              >
                 {isLoad ? "Loading" : isLogin ? "Sign Up" : "Login"}
               </Button>
               <Box

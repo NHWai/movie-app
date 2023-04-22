@@ -5,9 +5,10 @@ import React from "react";
 interface Props {
   reviewText: string;
   author: string;
+  rating: number;
 }
 
-export const ReviewBox = ({ reviewText, author }: Props) => {
+export const ReviewBox = ({ reviewText, author, rating }: Props) => {
   return (
     <Box sx={{ mb: 3 }}>
       <Box
@@ -22,7 +23,7 @@ export const ReviewBox = ({ reviewText, author }: Props) => {
         }}
       >
         <Typography mb={1} variant="subtitle2">
-          Rating: 4/<sub>5</sub>
+          Rating: {rating}/<sub>5</sub>
         </Typography>
         <div>{reviewText}</div>
 
@@ -34,8 +35,8 @@ export const ReviewBox = ({ reviewText, author }: Props) => {
             borderRight: "7px solid transparent",
             borderLeft: "7px solid transparent",
             position: "absolute",
-            bottom: 0,
-            left: "3.2%",
+            bottom: "1px",
+            left: "3.3%",
             transform: "translateY(100%)",
             zIndex: "100",
           }}

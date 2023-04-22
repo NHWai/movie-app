@@ -1,49 +1,53 @@
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MovielistType } from "./Home";
-import { Link as RouterLink } from "react-router-dom";
 import { ReviewBox } from "../components/ReviewBox";
+import { ReviewInput } from "../components/ReviewInput";
+import { MyContext } from "../components/MyProvider";
 
-type CastType = {
+interface MovieItemType {
   _id: string;
-  movie: string;
-  protagonist: string;
-  allie_rival: string;
-};
+  user: {
+    _id: string;
+    username: string;
+  };
+  title: string;
+  director: {
+    name: string;
+    gender: string;
+  };
+  genres: string[];
+  totalRating: number;
+  rating: number;
+  review: string;
+  year: number;
+  photoUrl: string;
+  photoId: string;
+}
+
+interface ReviewType {
+  _id: string;
+  rating: number;
+  comment: string;
+  movieId: string;
+  userId: string;
+  username: string;
+}
 
 const Movie = () => {
+  const { token } = useContext(MyContext);
   let { id } = useParams();
-  const [movieItem, setMovieItem] = useState<MovielistType>();
-  const [casts, setCasts] = useState<CastType[]>([]);
+  const [movieItem, setMovieItem] = useState<MovieItemType>();
+  const [reviews, setReviews] = useState<ReviewType[]>([]);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const url = "movies";
-    const url2 = "casts/movie";
-    const fetchData = async (
-      url: string,
-      id: string,
-      setFunc: (smth: any) => void
-    ) => {
-      const res = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/${url}/${id}`,
-        {
-          method: "GET",
-          redirect: "follow",
-        }
-      );
-      const data = await res.json();
-
-      if (res.status === 200) {
-        setFunc(data.data);
-        return true;
-      } else {
-        return false;
-      }
-    };
+    const url2 = "reviews";
     const getData = async (id: string) => {
       try {
         //fetching movie
@@ -52,15 +56,34 @@ const Movie = () => {
           throw Error("failed to fetch movie");
         }
 
-        //fetching casts
-        fetchData(url2, id, setCasts);
+        //fetching reviews
+        fetchData(url2, id, setReviews);
       } catch (err) {
         console.log({ err });
         navigate(`/error/${err}`);
       }
     };
     id && getData(id);
-  }, [id, navigate]);
+  }, [id, navigate, isSubmit]);
+
+  const fetchData = async (
+    url: string,
+    id: string,
+    setFunc: (smth: any) => void
+  ) => {
+    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/${url}/${id}`, {
+      method: "GET",
+      redirect: "follow",
+    });
+    const data = await res.json();
+
+    if (res.status === 200) {
+      setFunc(data.data);
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   return (
     <Box sx={{ paddingX: 1, marginY: "1rem" }}>
@@ -163,7 +186,7 @@ const Movie = () => {
                   Released Date: {movieItem?.year}
                 </Typography>
                 <Typography variant="subtitle2" fontStyle={"italic"}>
-                  Rating : {movieItem?.rating}
+                  Rating : {movieItem?.totalRating}
                 </Typography>
               </Box>
             </Stack>
@@ -185,13 +208,37 @@ const Movie = () => {
                 <Typography variant="h5">Featured Reviews</Typography>
               </div>
               <ReviewBox
+                rating={movieItem.rating}
                 reviewText={movieItem?.review}
-                author="Original Uploader"
+                author={movieItem.user.username}
               />
-              <ReviewBox
-                reviewText={movieItem?.review}
-                author="Original Uploader"
-              />
+              {reviews.map((review, idx) => {
+                return (
+                  <ReviewBox
+                    key={idx}
+                    reviewText={review.comment}
+                    author={review.username}
+                    rating={review.rating}
+                  />
+                );
+              })}
+              {/*check token string, check login user is not original upload user of the movie ,check login user is not added review */}
+              {token.tokenStr &&
+                token.id !== movieItem.user._id &&
+                !reviews?.some((el) => el.userId === token.id) && (
+                  <>
+                    <Typography my={2} variant="h6" fontStyle={"italic"}>
+                      Add review
+                    </Typography>
+                    <ReviewInput
+                      movieId={movieItem._id}
+                      tokenStr={token.tokenStr}
+                      userId={token.id}
+                      username={token.username}
+                      setIsSubmit={setIsSubmit}
+                    />
+                  </>
+                )}
             </Stack>
           </Box>
         </>

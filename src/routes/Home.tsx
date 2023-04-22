@@ -157,7 +157,7 @@ export const Home = () => {
       <Grid container spacing={2} rowSpacing={3}>
         {movieList?.map((el) => {
           const {
-            rating,
+            totalRating,
             genres,
             year,
             title,
@@ -174,7 +174,7 @@ export const Home = () => {
                 directorname={director.name}
                 year={year}
                 genres={genres}
-                rating={rating}
+                rating={totalRating as number}
                 title={title}
                 user={user}
                 setMovId={setMovId}

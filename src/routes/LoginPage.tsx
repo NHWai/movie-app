@@ -48,7 +48,7 @@ export const LoginPage = () => {
         console.log("clear jwt");
       }, 60000 * 45);
       //navigate to home page
-      navigate("/");
+      navigate(-1);
     }
   }, [token, navigate]);
 
@@ -217,7 +217,10 @@ export const LoginPage = () => {
                   </InputAdornment>
                 }
               />
-              <FormHelperText sx={{ height: "1.8rem" }}>
+              <FormHelperText
+                error={Boolean(errMsg.pwd)}
+                sx={{ height: "1.8rem" }}
+              >
                 {errMsg.pwd === ""
                   ? "Do not share your password with others "
                   : errMsg.pwd}

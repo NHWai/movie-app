@@ -64,7 +64,6 @@ export const EditMovie = () => {
           setEditMovie(() => {
             return {
               ...fetchedMovie,
-              dirgender: director.gender,
               dirname: director.name,
             };
           });
@@ -116,7 +115,6 @@ export const EditMovie = () => {
         title: editMovie.title,
         director: {
           name: editMovie.dirname,
-          gender: editMovie.dirgender,
         },
         genres: editMovie.genres,
         rating: editMovie.rating,
@@ -129,7 +127,6 @@ export const EditMovie = () => {
 
       //deleting redundant keys
       formDataObj.delete("dirname");
-      formDataObj.delete("dirgender");
       formDataObj.delete("genres");
 
       for (const key in formData) {
@@ -237,15 +234,7 @@ export const EditMovie = () => {
           }
         });
         break;
-      case "dirgender":
-        setErrArr((pre: any) => {
-          if (value === "") {
-            return { ...pre, dirgender: `can't be empty` };
-          } else {
-            return { ...pre, dirgender: "" };
-          }
-        });
-        break;
+
       case "coverPic":
         setErrArr((pre: any) => {
           if (value === "") {
@@ -389,22 +378,7 @@ export const EditMovie = () => {
                       onChange={handleChange}
                       onBlur={(e) => validateMovie("dirname", e.target.value)}
                     />
-                    <TextField
-                      error={errArr.dirgender ? true : false}
-                      variant="standard"
-                      label="director gender"
-                      name="dirgender"
-                      value={editMovie.dirgender}
-                      helperText={
-                        errArr.dirgender !== "" ? errArr.dirgender : null
-                      }
-                      onChange={handleChange}
-                      onBlur={(e) => validateMovie("dirgender", e.target.value)}
-                      select
-                    >
-                      <MenuItem value="male">Male</MenuItem>
-                      <MenuItem value="female">Female</MenuItem>
-                    </TextField>
+
                     <br />
                     <Box
                       sx={{

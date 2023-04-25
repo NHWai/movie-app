@@ -11,7 +11,6 @@ import { MyContext } from "../components/MyProvider";
 
 export interface DirectorType {
   name: string;
-  gender: string;
 }
 
 export interface MovieType {
@@ -27,7 +26,7 @@ export interface MovieType {
 export interface MovieProps {
   title: string;
   dirname: string;
-  dirgender: string;
+
   genres: string[];
   rating: string;
   review: string;
@@ -38,7 +37,6 @@ export interface MovieProps {
 export interface ErrArr {
   title: string | undefined;
   dirname: string | undefined;
-  dirgender: string | undefined;
   genres: string | undefined;
   rating: string | undefined;
   review: string | undefined;
@@ -49,7 +47,6 @@ export interface ErrArr {
 export const initialErrArr: ErrArr = {
   title: undefined,
   dirname: undefined,
-  dirgender: undefined,
   genres: undefined,
   rating: undefined,
   review: undefined,
@@ -61,7 +58,6 @@ export const initialMovie: MovieType = {
   title: "",
   director: {
     name: "",
-    gender: "",
   },
   genres: [],
   rating: "",
@@ -72,7 +68,6 @@ export const initialMovie: MovieType = {
 export const initialMovieProps: MovieProps = {
   title: "",
   dirname: "",
-  dirgender: "",
   genres: [],
   rating: "",
   review: "",
@@ -86,6 +81,7 @@ export const movieGenres = [
   "Comedy",
   "Crime",
   "Drama",
+  "Documentary",
   "Fantasy",
   "Horror",
   "Legal",
@@ -93,6 +89,7 @@ export const movieGenres = [
   "Musical",
   "Romance",
   "Sci-Fi",
+  "Sports",
   "Thriller",
   "Western",
   "SitCom",
@@ -150,7 +147,6 @@ export const AddMovie = () => {
         title: movie.title,
         director: {
           name: movie.dirname,
-          gender: movie.dirgender,
         },
         genres: movie.genres,
         rating: movie.rating,
@@ -231,14 +227,12 @@ export const AddMovie = () => {
         setMovie((pre) => {
           return {
             ...pre,
-            review: value.slice(0, 60).trim(),
+            review: value.trim(),
           };
         });
         setErrArr((pre: any) => {
           if (value === "") {
             return { ...pre, review: `can't be empty` };
-          } else if (value.length > 60) {
-            return { ...pre, review: "too much characters" };
           } else {
             return { ...pre, review: "" };
           }
@@ -265,15 +259,6 @@ export const AddMovie = () => {
             return { ...pre, dirname: `can't be empty` };
           } else {
             return { ...pre, dirname: "" };
-          }
-        });
-        break;
-      case "dirgender":
-        setErrArr((pre: any) => {
-          if (value === "") {
-            return { ...pre, dirgender: `can't be empty` };
-          } else {
-            return { ...pre, dirgender: "" };
           }
         });
         break;
@@ -402,21 +387,6 @@ export const AddMovie = () => {
                   onChange={handleChange}
                   onBlur={(e) => validateMovie("dirname", e.target.value)}
                 />
-                <TextField
-                  required
-                  error={errArr.dirgender ? true : false}
-                  variant="standard"
-                  label="director gender"
-                  name="dirgender"
-                  value={movie.dirgender}
-                  helperText={errArr.dirgender !== "" ? errArr.dirgender : null}
-                  onChange={handleChange}
-                  onBlur={(e) => validateMovie("dirgender", e.target.value)}
-                  select
-                >
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                </TextField>
                 <br />
               </>
             )}

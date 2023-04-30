@@ -16,6 +16,7 @@ import { CardItem } from "../components/CardItem";
 import { MuiLayout } from "../components/MuiLayout";
 import { MyContext } from "../components/MyProvider";
 import Box from "@mui/system/Box";
+import { useSearchParams } from "react-router-dom";
 
 export type MovielistType = MovieType & {
   _id: string;
@@ -25,44 +26,26 @@ export type MovielistType = MovieType & {
 export const Home = () => {
   const [movieList, setmovieList] = useState<MovielistType[] | null>();
   const [movId, setMovId] = useState<string>("");
-  const [genre, setGenre] = React.useState<string | null>(null);
-  const { token, navBarGenre } = useContext(MyContext);
+  const { token } = useContext(MyContext);
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   React.useEffect(() => {
-    const getMoviesByGenre = async (movieGenre: string) => {
-      const endpoint = `${process.env.REACT_APP_BASE_URL}/movies/genre/${movieGenre}`;
-      try {
-        const res = await fetch(endpoint, {
-          method: "GET",
-          redirect: "follow",
-        });
-        const data = await res.json();
-        if (res.status === 200) {
-          setmovieList(data.data);
-        } else {
-          throw new Error(`${data.message}`);
-        }
-      } catch (err) {
-        navigate(`/error/${err}`);
-      }
-    };
-    if (genre) {
-      getMoviesByGenre(genre);
-    } else if (navBarGenre) {
-      getMoviesByGenre(navBarGenre);
+    const selectedGenre = searchParams.get("genres");
+    if (selectedGenre) {
+      getMoviesByGenre(selectedGenre);
     } else {
       getMovies();
     }
-  }, [genre, navigate, navBarGenre]);
+  }, [searchParams]);
 
   React.useEffect(() => {
     setmovieList((pre) => pre?.filter((el) => el._id !== movId));
   }, [movId]);
 
   React.useEffect(() => {
-    getMovies();
+    !searchParams.get("genres") && getMovies();
   }, []);
 
   const getMovies = async () => {
@@ -77,6 +60,24 @@ export const Home = () => {
 
       if (res.status === 200) {
         setmovieList(data);
+      } else {
+        throw new Error(`${data.message}`);
+      }
+    } catch (err) {
+      navigate(`/error/${err}`);
+    }
+  };
+
+  const getMoviesByGenre = async (movieGenre: string) => {
+    const endpoint = `${process.env.REACT_APP_BASE_URL}/movies/genre/${movieGenre}`;
+    try {
+      const res = await fetch(endpoint, {
+        method: "GET",
+        redirect: "follow",
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        setmovieList(data.data);
       } else {
         throw new Error(`${data.message}`);
       }
@@ -113,9 +114,11 @@ export const Home = () => {
           </div>
         )}
         <Autocomplete
-          value={genre}
+          value={searchParams.get("genres") || null}
           onChange={(event: any, newValue: string | null) => {
-            setGenre(newValue);
+            !newValue
+              ? setSearchParams("")
+              : setSearchParams(`?genres=${newValue}`);
           }}
           size="small"
           disablePortal
@@ -127,15 +130,16 @@ export const Home = () => {
         />
       </Box>
 
-      {movieList?.length === 0 && (
-        <Stack
-          minHeight={"50vh"}
-          justifyContent={"center"}
-          alignItems={"center"}
+      {searchParams.get("genres") && (
+        <Typography
+          variant="caption"
+          fontStyle={"italic"}
+          sx={{ dispaly: { xs: "block", sm: "none" }, mb: 2 }}
         >
-          No Movies
-        </Stack>
+          Genre:<b> {searchParams.get("genres")} </b>
+        </Typography>
       )}
+
       {movieList === undefined && (
         <Stack
           minHeight={"50vh"}
@@ -145,14 +149,15 @@ export const Home = () => {
           Loading
         </Stack>
       )}
-      {navBarGenre && (
-        <Typography
-          variant="caption"
-          fontStyle={"italic"}
-          sx={{ dispaly: { xs: "block", sm: "none" } }}
+
+      {movieList?.length === 0 && (
+        <Stack
+          minHeight={"50vh"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
-          Genre:<b> {navBarGenre} </b>
-        </Typography>
+          No Movies
+        </Stack>
       )}
       <Grid container spacing={2} rowSpacing={3}>
         {movieList?.map((el) => {

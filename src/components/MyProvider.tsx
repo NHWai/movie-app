@@ -14,8 +14,6 @@ type TokenType = {
 type MyContextType = {
   token: TokenType;
   setToken: React.Dispatch<React.SetStateAction<TokenType>>;
-  navBarGenre: string;
-  setNavBarGenre: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const initialToken = {
@@ -28,8 +26,6 @@ export const initialToken = {
 export const MyContext = React.createContext<MyContextType>({
   token: initialToken,
   setToken: () => {},
-  navBarGenre: "",
-  setNavBarGenre: () => {},
 });
 
 export const MyProvider = ({ children }: Props) => {
@@ -47,11 +43,8 @@ export const MyProvider = ({ children }: Props) => {
   }
 
   const [token, setToken] = React.useState<TokenType>(initialStateofToken);
-  const [navBarGenre, setNavBarGenre] = React.useState<string>("");
   return (
-    <MyContext.Provider
-      value={{ token, setToken, navBarGenre, setNavBarGenre }}
-    >
+    <MyContext.Provider value={{ token, setToken }}>
       {children}
     </MyContext.Provider>
   );

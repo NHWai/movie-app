@@ -19,11 +19,14 @@ import React, { useContext, useState } from "react";
 import { Outlet, useLocation, Link as RouterLink } from "react-router-dom";
 import { initialToken, MyContext } from "./MyProvider";
 import { movieGenres } from "../routes/AddMovie";
+import { useSearchParams } from "react-router-dom";
+
 export const MuiNavbar = () => {
-  const { token, setToken, setNavBarGenre } = useContext(MyContext);
+  const { token, setToken } = useContext(MyContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   React.useEffect(() => setAnchorEl(null), [token.tokenStr]);
 
@@ -137,9 +140,12 @@ export const MuiNavbar = () => {
             <Autocomplete
               size="small"
               disablePortal
-              onChange={(e: any, newValue: string | null) =>
-                setNavBarGenre(newValue as string)
-              }
+              value={searchParams.get("genres") || null}
+              onChange={(e: any, newValue: string | null) => {
+                !newValue
+                  ? setSearchParams("")
+                  : setSearchParams(`?genres=${newValue}`);
+              }}
               options={movieGenres}
               sx={{ px: 2, mt: 2 }}
               renderInput={(params) => (

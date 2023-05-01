@@ -7,8 +7,11 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
+import {
+  Link as RouterLink,
+  useSearchParams,
+  useNavigate,
+} from "react-router-dom";
 
 import AddIcon from "@mui/icons-material/Add";
 import { movieGenres, MovieType } from "./AddMovie";
@@ -16,12 +19,12 @@ import { CardItem } from "../components/CardItem";
 import { MuiLayout } from "../components/MuiLayout";
 import { MyContext } from "../components/MyProvider";
 import Box from "@mui/system/Box";
-import { useSearchParams } from "react-router-dom";
 
 export type MovielistType = MovieType & {
   _id: string;
   user: string;
   photoUrl: string;
+  totalReviews: number;
 };
 export const Home = () => {
   const [movieList, setmovieList] = useState<MovielistType[] | null>();
@@ -43,10 +46,6 @@ export const Home = () => {
   React.useEffect(() => {
     setmovieList((pre) => pre?.filter((el) => el._id !== movId));
   }, [movId]);
-
-  React.useEffect(() => {
-    !searchParams.get("genres") && getMovies();
-  }, []);
 
   const getMovies = async () => {
     const endpoint = `${process.env.REACT_APP_BASE_URL}/movies`;
@@ -134,7 +133,7 @@ export const Home = () => {
         <Typography
           variant="caption"
           fontStyle={"italic"}
-          sx={{ dispaly: { xs: "block", sm: "none" }, mb: 2 }}
+          sx={{ display: { xs: "block", sm: "none" }, mb: 2 }}
         >
           Genre:<b> {searchParams.get("genres")} </b>
         </Typography>
@@ -170,6 +169,7 @@ export const Home = () => {
             _id: id,
             user,
             photoId,
+            totalReviews,
           } = el;
           return (
             <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
@@ -182,6 +182,7 @@ export const Home = () => {
                 rating={totalRating as number}
                 title={title}
                 user={user}
+                totalReviews={totalReviews}
                 setMovId={setMovId}
               />
             </Grid>

@@ -1,4 +1,11 @@
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Icon,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,7 +13,9 @@ import { MovielistType } from "./Home";
 import { ReviewBox } from "../components/ReviewBox";
 import { ReviewInput } from "../components/ReviewInput";
 import { MyContext } from "../components/MyProvider";
-
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarRateIcon from "@mui/icons-material/StarRate";
+import { StarHalf } from "@mui/icons-material";
 interface MovieItemType {
   _id: string;
   user: {
@@ -85,9 +94,15 @@ const Movie = () => {
     }
   };
 
+  const ratingStar = Math.floor(movieItem?.totalRating as number);
+  const halfStar = Number.isInteger(movieItem?.totalRating as number) ? 0 : 1;
+  const blankStar = 5 - ratingStar - halfStar;
+  const ratingStarArr = ratingStar ? new Array(ratingStar).fill(1) : [];
+  const blankStarArr = blankStar ? new Array(blankStar).fill(1) : [];
+
   return (
     <Box sx={{ paddingX: 1, marginY: "1rem" }}>
-      {movieItem ? (
+      {movieItem && reviews ? (
         <>
           <Box
             sx={{
@@ -188,6 +203,29 @@ const Movie = () => {
                 <Typography variant="subtitle2" fontStyle={"italic"}>
                   Rating : {movieItem?.totalRating}
                 </Typography>
+                <Stack mt={1}>
+                  <div>
+                    {ratingStarArr.map((el, idx) => (
+                      <Icon fontSize="small" key={idx}>
+                        <StarRateIcon color="warning" />
+                      </Icon>
+                    ))}
+                    {halfStar !== 0 && (
+                      <Icon fontSize="small">
+                        <StarHalf color="warning" />
+                      </Icon>
+                    )}
+                    {blankStarArr.map((el, idx) => (
+                      <Icon fontSize="small" key={idx}>
+                        <StarBorderIcon color="warning" />{" "}
+                      </Icon>
+                    ))}
+                  </div>
+                  <Typography ml={1.5} variant="caption">
+                    ( {reviews.length + 1}{" "}
+                    {reviews.length + 1 === 1 ? "review" : "reviews"} )
+                  </Typography>
+                </Stack>
               </Box>
             </Stack>
             <Stack

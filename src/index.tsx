@@ -32,7 +32,6 @@ const router = createBrowserRouter(
       <Route path="error/:msg" element={<Error />} />
       <Route path="create" element={<AddMovie />} />
       <Route path="edit/:movieId" element={<EditMovie />} />
-
       <Route path="*" element={<ErrorGlobal />} />
     </Route>
   )

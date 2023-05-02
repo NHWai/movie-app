@@ -17,6 +17,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { useNavigate } from "react-router-dom/";
 import { FormLayout } from "../components/FormLayout";
 import { MyContext } from "../components/MyProvider";
+import { MuiLayout } from "../components/MuiLayout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface FormDataType {
   username: string;
@@ -176,104 +178,114 @@ export const LoginPage = () => {
   };
 
   return (
-    <FormLayout>
-      <Stack spacing={2}>
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={1} direction="column">
-            <TextField
-              variant="standard"
-              autoComplete="off"
-              required
-              label="username"
-              name="username"
-              value={formData.username}
-              error={Boolean(errMsg.username)}
-              helperText={errMsg.username}
-              onFocus={handleFocus}
-              onBlur={(e) => validate(e.target.name, e.target.value)}
-              onChange={handleChange}
-            />
-            <FormControl variant="standard">
-              <InputLabel htmlFor="standard-adornment-password" required>
-                Password
-              </InputLabel>
-              <Input
-                id="standard-adornment-password"
-                type={showPassword ? "text" : "password"}
-                name="pwd"
-                value={formData.pwd}
-                error={Boolean(errMsg.pwd)}
-                onFocus={handleFocus}
-                onBlur={(e) => validate(e.target.name, e.target.value)}
-                onChange={handleChange}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword((show) => !show)}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-              <FormHelperText
-                error={Boolean(errMsg.pwd)}
-                sx={{ height: "1.8rem" }}
-              >
-                {errMsg.pwd === ""
-                  ? "Do not share your password with others "
-                  : errMsg.pwd}
-              </FormHelperText>
-            </FormControl>
-            {isLogin && (
-              <TextField
-                required
-                fullWidth
-                variant="standard"
-                select
-                label="select role"
-                name="role"
-                value={formData.role}
-                helperText={errMsg.role || " "}
-                onFocus={handleFocus}
-                onBlur={(e) => validate(e.target.name, e.target.value)}
-                onChange={handleChange}
-              >
-                <MenuItem value="Admin">Admin</MenuItem>
-                <MenuItem value="User">User</MenuItem>
-              </TextField>
-            )}
-          </Stack>
+    <MuiLayout>
+      <Button
+        sx={{ alignSelf: "flex-start", mb: 2 }}
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+      >
+        Main Page
+      </Button>
 
-          <Stack direction="row-reverse">
-            <Stack spacing={1} direction={"column"}>
-              <Button
-                disabled={isLoad}
-                color="primary"
-                variant="contained"
-                type="submit"
-              >
-                {isLoad ? "Loading" : isLogin ? "Sign Up" : "Login"}
-              </Button>
-              <Box
-                component={"button"}
-                sx={{
-                  backgroundColor: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  "&:hover": {
-                    color: "primary.dark",
-                  },
-                }}
-                onClick={() => setIsLogin((pre) => !pre)}
-              >
-                {isLogin ? "Login" : "Sign Up"}
-              </Box>
+      <FormLayout>
+        <Stack spacing={2}>
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={1} direction="column">
+              <TextField
+                variant="standard"
+                autoComplete="off"
+                required
+                label="username"
+                name="username"
+                value={formData.username}
+                error={Boolean(errMsg.username)}
+                helperText={errMsg.username}
+                onFocus={handleFocus}
+                onBlur={(e) => validate(e.target.name, e.target.value)}
+                onChange={handleChange}
+              />
+              <FormControl variant="standard">
+                <InputLabel htmlFor="standard-adornment-password" required>
+                  Password
+                </InputLabel>
+                <Input
+                  id="standard-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  name="pwd"
+                  value={formData.pwd}
+                  error={Boolean(errMsg.pwd)}
+                  onFocus={handleFocus}
+                  onBlur={(e) => validate(e.target.name, e.target.value)}
+                  onChange={handleChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword((show) => !show)}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText
+                  error={Boolean(errMsg.pwd)}
+                  sx={{ height: "1.8rem" }}
+                >
+                  {errMsg.pwd === ""
+                    ? "Do not share your password with others "
+                    : errMsg.pwd}
+                </FormHelperText>
+              </FormControl>
+              {isLogin && (
+                <TextField
+                  required
+                  fullWidth
+                  variant="standard"
+                  select
+                  label="select role"
+                  name="role"
+                  value={formData.role}
+                  helperText={errMsg.role || " "}
+                  onFocus={handleFocus}
+                  onBlur={(e) => validate(e.target.name, e.target.value)}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="Admin">Admin</MenuItem>
+                  <MenuItem value="User">User</MenuItem>
+                </TextField>
+              )}
             </Stack>
-          </Stack>
-        </form>
-      </Stack>
-    </FormLayout>
+
+            <Stack direction="row-reverse">
+              <Stack spacing={1} direction={"column"}>
+                <Button
+                  disabled={isLoad}
+                  color="primary"
+                  variant="contained"
+                  type="submit"
+                >
+                  {isLoad ? "Loading" : isLogin ? "Sign Up" : "Login"}
+                </Button>
+                <Box
+                  component={"button"}
+                  sx={{
+                    backgroundColor: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    "&:hover": {
+                      color: "primary.dark",
+                    },
+                  }}
+                  onClick={() => setIsLogin((pre) => !pre)}
+                >
+                  {isLogin ? "Login" : "Sign Up"}
+                </Box>
+              </Stack>
+            </Stack>
+          </form>
+        </Stack>
+      </FormLayout>
+    </MuiLayout>
   );
 };

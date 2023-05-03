@@ -13,7 +13,9 @@ export const MuiLayout = ({ children }: LayoutProps) => {
         display: "flex",
         flexDirection: "column",
         paddingY: "1rem",
-        paddingX: "3rem",
+        paddingX: "1.25rem",
+        maxWidth: "1024px",
+        marginX: "auto",
       }}
     >
       {children}

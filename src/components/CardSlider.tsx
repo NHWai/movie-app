@@ -1,9 +1,6 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
-import { Box, Card, CardContent, Typography } from "@mui/material";
-import { MuiLayout } from "./MuiLayout";
 import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
 
 const CardContainer = styled("div")({
   height: "300px",

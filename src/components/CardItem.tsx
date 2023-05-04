@@ -1,5 +1,5 @@
-import { Typography, Button, Stack, Grid, Icon } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Typography, Button, Stack, Grid, Icon, Box } from "@mui/material";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "./MyProvider";
@@ -13,6 +13,7 @@ type PropsCardItem = {
   rating: number | string;
   movieid: string;
   photoId: string;
+  photoUrl: string;
   user: string;
   totalReviews: number;
   setMovId: React.Dispatch<React.SetStateAction<string>>;
@@ -22,17 +23,10 @@ export const CardItem = (props: PropsCardItem) => {
   const { token } = useContext(MyContext);
   const [isDel, setIsDel] = useState(false);
   const navigate = useNavigate();
-  const {
-    year,
-    title,
-    directorname,
-    genres,
-    rating,
-    movieid,
-    user,
-    photoId,
-    totalReviews,
-  } = props;
+  const [searchParams] = useSearchParams();
+
+  const { title, rating, movieid, user, photoId, totalReviews, photoUrl } =
+    props;
 
   const delMovie = async (
     movieid: string,
@@ -67,65 +61,80 @@ export const CardItem = (props: PropsCardItem) => {
   };
 
   return (
-    <Stack
-      height={"270px"}
-      p={1}
-      justifyContent={"space-evenly"}
-      sx={
-        isDel
-          ? {
-              opacity: 0.5,
-              cursor: "not-allowed",
-            }
-          : {
-              borderRadius: "0.3rem",
-              boxShadow: "0 2px 4px 0 rgba(0,0,0,0.2)",
-              transition: "0.3s",
-              "&:hover": { boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)" },
-            }
-      }
+    <Box
+      sx={{
+        height: searchParams.get("userid") ? "255px" : "230px",
+        padding: 1,
+        margin: 0.8,
+        borderRadius: "0.3rem",
+        boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <Typography
-        sx={{ fontSize: 12, fontStyle: "italic" }}
-        color="text.secondary"
-        gutterBottom
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+        }}
+        component={RouterLink}
+        to={`/movie/${movieid}`}
+      ></Box>
+      <Box
+        sx={{
+          height: "150px",
+          width: "100%",
+        }}
       >
-        Released Date : {year}
-      </Typography>
-      <Typography variant="h5" component="div">
-        {title}
-      </Typography>
-      <Typography
-        sx={{ mb: 1.5, fontSize: 12, fontStyle: "italic" }}
-        color="text.secondary"
+        <img
+          src={photoUrl}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </Box>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-around",
+        }}
       >
-        Directed by {directorname}
-      </Typography>
-      <Typography variant="body2">Genres: {genres?.join(", ")} </Typography>
-      <Stack flexDirection={"row"} alignItems={"center"} gap={0.5}>
-        <Typography variant="body2">{`Rating : ${rating}`}</Typography>
-        <Stack mt={-1}>
-          <Icon fontSize="small">
-            <StarRateIcon color="warning" />
-          </Icon>
-        </Stack>
-        <Typography variant="caption">
-          ({totalReviews} {totalReviews === 1 ? "review" : "reviews"})
+        <Typography
+          variant="body1"
+          fontWeight={"bold"}
+          component="div"
+          align="center"
+        >
+          {title}
         </Typography>
-      </Stack>
-      <Grid container>
-        <Grid item xs={12}>
-          <Button
-            component={RouterLink}
-            to={`/movie/${movieid}`}
-            size="small"
-            disabled={isDel}
-          >
-            See More
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Stack direction={"row"} spacing={1}>
+        <Stack
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          gap={0.5}
+        >
+          <Typography
+            variant="body2"
+            fontStyle={"italic"}
+          >{`Rating : ${rating}`}</Typography>
+          <Stack mt={-1}>
+            <Icon fontSize="small">
+              <StarRateIcon color="warning" />
+            </Icon>
+          </Stack>
+          <Typography variant="caption">
+            ({totalReviews} {totalReviews === 1 ? "review" : "reviews"})
+          </Typography>
+        </Stack>
+
+        {searchParams.get("userid") && (
+          <Stack direction={"row"} spacing={1} justifyContent={"center"}>
             <Button
               variant="outlined"
               color="info"
@@ -146,8 +155,8 @@ export const CardItem = (props: PropsCardItem) => {
               Delete
             </Button>
           </Stack>
-        </Grid>
-      </Grid>
-    </Stack>
+        )}
+      </Box>
+    </Box>
   );
 };

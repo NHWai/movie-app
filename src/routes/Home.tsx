@@ -5,6 +5,7 @@ import {
   Button,
   Autocomplete,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import {
@@ -36,10 +37,13 @@ export const Home = () => {
 
   React.useEffect(() => {
     const selectedGenre = searchParams.get("genres");
+    const moviesByUserid = searchParams.get("userid");
     if (selectedGenre) {
-      getMoviesByGenre(selectedGenre);
+      getMovies("movies/genre", selectedGenre);
+    } else if (moviesByUserid) {
+      getMovies("movies/userId", moviesByUserid);
     } else {
-      getMovies();
+      getMovies("movies");
     }
   }, [searchParams]);
 
@@ -47,8 +51,10 @@ export const Home = () => {
     setmovieList((pre) => pre?.filter((el) => el._id !== movId));
   }, [movId]);
 
-  const getMovies = async () => {
-    const endpoint = `${process.env.REACT_APP_BASE_URL}/movies`;
+  const getMovies = async (resource: string, params?: string) => {
+    const endpoint = `${process.env.REACT_APP_BASE_URL}/${resource}/${
+      params ? params : ""
+    }`;
 
     try {
       const res = await fetch(endpoint, {
@@ -67,24 +73,6 @@ export const Home = () => {
     }
   };
 
-  const getMoviesByGenre = async (movieGenre: string) => {
-    const endpoint = `${process.env.REACT_APP_BASE_URL}/movies/genre/${movieGenre}`;
-    try {
-      const res = await fetch(endpoint, {
-        method: "GET",
-        redirect: "follow",
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        setmovieList(data.data);
-      } else {
-        throw new Error(`${data.message}`);
-      }
-    } catch (err) {
-      navigate(`/error/${err}`);
-    }
-  };
-
   return (
     <MuiLayout>
       <Typography
@@ -92,7 +80,7 @@ export const Home = () => {
         align="center"
         sx={{ typography: { xs: "h4", sm: "h3", lg: "h2" } }}
       >
-        All Movies
+        {searchParams.get("userid") && token ? "My Movies" : "All Movies"}
       </Typography>
 
       <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2, mb: 4 }}>
@@ -140,13 +128,16 @@ export const Home = () => {
       )}
 
       {movieList === undefined && (
-        <Stack
-          minHeight={"50vh"}
-          justifyContent={"center"}
-          alignItems={"center"}
+        <Box
+          sx={{
+            display: "flex",
+            minHeight: "40vh",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          Loading
-        </Stack>
+          <CircularProgress />
+        </Box>
       )}
 
       {movieList?.length === 0 && (
@@ -170,6 +161,7 @@ export const Home = () => {
             user,
             photoId,
             totalReviews,
+            photoUrl,
           } = el;
           return (
             <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
@@ -184,6 +176,7 @@ export const Home = () => {
                 user={user}
                 totalReviews={totalReviews}
                 setMovId={setMovId}
+                photoUrl={photoUrl}
               />
             </Grid>
           );

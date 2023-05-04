@@ -1,4 +1,11 @@
-import { Box, Button, Icon, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Icon,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useState, useContext } from "react";
 import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -465,9 +472,19 @@ const Movie = () => {
           </Box>
         </>
       ) : (
-        <Stack minHeight={"50vh"} justifyContent="center" alignItems={"center"}>
-          Loading
-        </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            minHeight: "50vh",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+        // <Stack minHeight={"50vh"} justifyContent="center" alignItems={"center"}>
+        //   Loading
+        // </Stack>
       )}
     </Box>
   );

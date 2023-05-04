@@ -74,7 +74,11 @@ export const MuiNavbar = () => {
                   open={Boolean(anchorEl)}
                   onClose={() => setAnchorEl(null)}
                 >
-                  <MenuItem>
+                  <MenuItem
+                    component={RouterLink}
+                    to={`/?userid=${token.id}`}
+                    onClick={() => setAnchorEl(null)}
+                  >
                     <Typography
                       fontWeight={"bold"}
                       fontStyle={"italic"}

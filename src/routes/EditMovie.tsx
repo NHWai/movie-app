@@ -286,7 +286,7 @@ export const EditMovie = () => {
         {!editMovie ? (
           "Loading"
         ) : (
-          <Stack>
+          <Stack sx={{ width: "100%", maxWidth: "380px" }}>
             <form onSubmit={(e) => handleSubmitted(e)}>
               <Stack spacing={1} sx={{ mb: 2 }}>
                 {!next ? (
@@ -334,7 +334,7 @@ export const EditMovie = () => {
                     />
                     <TextField
                       error={errArr.review ? true : false}
-                      variant="outlined"
+                      variant="standard"
                       placeholder="please provide short and sweet review"
                       name="review"
                       multiline

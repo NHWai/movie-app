@@ -8,6 +8,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useNavigate } from "react-router-dom";
 import { FormLayout } from "../components/FormLayout";
 import { MyContext } from "../components/MyProvider";
+import { MuiLayout } from "../components/MuiLayout";
 
 export interface DirectorType {
   name: string;
@@ -292,171 +293,173 @@ export const AddMovie = () => {
   };
 
   return (
-    <FormLayout>
-      <Stack>
-        <form onSubmit={(e) => handleSubmitted(e)}>
-          <Stack spacing={1} sx={{ mb: 2 }}>
-            {!next ? (
-              <>
-                <TextField
-                  error={errArr.title ? true : false}
-                  variant="standard"
-                  label="title"
-                  name="title"
-                  required
-                  value={movie.title}
-                  helperText={errArr.title !== "" ? errArr.title : null}
-                  onBlur={(e) => validateMovie("title", e.target.value)}
-                  onChange={handleChange}
-                />
+    <MuiLayout>
+      <FormLayout>
+        <Stack sx={{ width: "100%", maxWidth: "380px" }}>
+          <form onSubmit={(e) => handleSubmitted(e)}>
+            <Stack spacing={1} sx={{ mb: 2 }}>
+              {!next ? (
+                <>
+                  <TextField
+                    error={errArr.title ? true : false}
+                    variant="standard"
+                    label="title"
+                    name="title"
+                    required
+                    value={movie.title}
+                    helperText={errArr.title !== "" ? errArr.title : null}
+                    onBlur={(e) => validateMovie("title", e.target.value)}
+                    onChange={handleChange}
+                  />
 
-                <TextField
-                  error={errArr.rating ? true : false}
-                  variant="standard"
-                  label="rating"
-                  name="rating"
-                  required
-                  value={!movie.rating ? "" : movie.rating}
-                  helperText={
-                    !movie.rating
-                      ? `Please rate 1 to 5`
-                      : errArr.rating !== ""
-                      ? errArr.rating
-                      : null
-                  }
-                  onBlur={(e) => validateMovie("rating", e.target.value)}
-                  onChange={handleChange}
-                />
-                <TextField
-                  style={{ marginBottom: "1rem" }}
-                  error={errArr.year ? true : false}
-                  variant="standard"
-                  label="released year"
-                  name="year"
-                  required
-                  value={!movie.year ? "" : movie.year}
-                  onChange={handleChange}
-                  helperText={errArr.year !== "" ? errArr.year : null}
-                  onBlur={(e) => validateMovie("year", e.target.value)}
-                />
-                <TextField
-                  error={errArr.review ? true : false}
-                  variant="outlined"
-                  placeholder="please provide short and sweet review"
-                  name="review"
-                  multiline
-                  rows={3}
-                  required
-                  value={movie.review}
-                  onChange={handleChange}
-                  helperText={errArr.review !== "" ? errArr.review : null}
-                  onBlur={(e) => validateMovie("review", e.target.value)}
-                />
-              </>
-            ) : (
-              <>
-                <TextField
-                  required
-                  error={errArr.genres ? true : false}
-                  variant="standard"
-                  label="genres"
-                  name="genres"
-                  value={movie.genres}
-                  onChange={handleChange}
-                  onBlur={(e) => validateMovie("genres", e.target.value)}
-                  helperText={errArr.genres !== "" ? errArr.genres : null}
-                  select
-                  SelectProps={{ multiple: true }}
-                >
-                  {movieGenres.map((el) => {
-                    return (
-                      <MenuItem key={el} value={el}>
-                        {el}
-                      </MenuItem>
-                    );
-                  })}
-                </TextField>
-                <TextField
-                  error={errArr.dirname ? true : false}
-                  required
-                  variant="standard"
-                  label="director name"
-                  name="dirname"
-                  value={movie.dirname}
-                  helperText={errArr.dirname !== "" ? errArr.dirname : null}
-                  onChange={handleChange}
-                  onBlur={(e) => validateMovie("dirname", e.target.value)}
-                />
-                <br />
-              </>
-            )}
-
-            <Box
-              sx={{
-                maxWidth: "200px",
-                display: next ? "flex" : "none",
-                flexDirection: "column",
-                gap: "0.4rem",
-              }}
-            >
-              <label>Cover Image</label>
-              <input
-                onChange={(e) => {
-                  if (e.target?.files) {
-                    setCoverPicFile(e.target.files[0]);
-                  }
-                  if (e.target.value) {
-                    setErrArr((pre) => {
-                      return { ...pre, [e.target.name]: "" };
-                    });
-                  } else {
-                    setErrArr((pre) => {
-                      return { ...pre, [e.target.name]: undefined };
-                    });
-                  }
-                }}
-                name="coverPic"
-                type="file"
-                accept="image/jpg, image/jpeg, image/png"
-              />
-              {errArr.coverPic === undefined && (
-                <small style={{ color: "red" }}>
-                  Please upload a cover picture for movie!!
-                </small>
+                  <TextField
+                    error={errArr.rating ? true : false}
+                    variant="standard"
+                    label="rating"
+                    name="rating"
+                    required
+                    value={!movie.rating ? "" : movie.rating}
+                    helperText={
+                      !movie.rating
+                        ? `Please rate 1 to 5`
+                        : errArr.rating !== ""
+                        ? errArr.rating
+                        : null
+                    }
+                    onBlur={(e) => validateMovie("rating", e.target.value)}
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    style={{ marginBottom: "1rem" }}
+                    error={errArr.year ? true : false}
+                    variant="standard"
+                    label="released year"
+                    name="year"
+                    required
+                    value={!movie.year ? "" : movie.year}
+                    onChange={handleChange}
+                    helperText={errArr.year !== "" ? errArr.year : null}
+                    onBlur={(e) => validateMovie("year", e.target.value)}
+                  />
+                  <TextField
+                    error={errArr.review ? true : false}
+                    variant="standard"
+                    placeholder="please provide short and sweet review"
+                    name="review"
+                    multiline
+                    rows={3}
+                    required
+                    value={movie.review}
+                    onChange={handleChange}
+                    helperText={errArr.review !== "" ? errArr.review : null}
+                    onBlur={(e) => validateMovie("review", e.target.value)}
+                  />
+                </>
+              ) : (
+                <>
+                  <TextField
+                    required
+                    error={errArr.genres ? true : false}
+                    variant="standard"
+                    label="genres"
+                    name="genres"
+                    value={movie.genres}
+                    onChange={handleChange}
+                    onBlur={(e) => validateMovie("genres", e.target.value)}
+                    helperText={errArr.genres !== "" ? errArr.genres : null}
+                    select
+                    SelectProps={{ multiple: true }}
+                  >
+                    {movieGenres.map((el) => {
+                      return (
+                        <MenuItem key={el} value={el}>
+                          {el}
+                        </MenuItem>
+                      );
+                    })}
+                  </TextField>
+                  <TextField
+                    error={errArr.dirname ? true : false}
+                    required
+                    variant="standard"
+                    label="director name"
+                    name="dirname"
+                    value={movie.dirname}
+                    helperText={errArr.dirname !== "" ? errArr.dirname : null}
+                    onChange={handleChange}
+                    onBlur={(e) => validateMovie("dirname", e.target.value)}
+                  />
+                  <br />
+                </>
               )}
-            </Box>
-          </Stack>
-          <Stack direction="row-reverse">
-            {!next ? (
-              <IconButton aria-label="next" size="small" type="submit">
-                <ArrowForwardIcon />
-              </IconButton>
-            ) : (
-              <Stack
-                width="100%"
-                direction={"row"}
-                justifyContent="space-between"
+
+              <Box
+                sx={{
+                  maxWidth: "200px",
+                  display: next ? "flex" : "none",
+                  flexDirection: "column",
+                  gap: "0.4rem",
+                }}
               >
-                <IconButton
-                  aria-label="goback"
-                  onClick={() => setNext(false)}
-                  size="small"
-                >
-                  <ArrowBackIcon />
+                <label>Cover Image</label>
+                <input
+                  onChange={(e) => {
+                    if (e.target?.files) {
+                      setCoverPicFile(e.target.files[0]);
+                    }
+                    if (e.target.value) {
+                      setErrArr((pre) => {
+                        return { ...pre, [e.target.name]: "" };
+                      });
+                    } else {
+                      setErrArr((pre) => {
+                        return { ...pre, [e.target.name]: undefined };
+                      });
+                    }
+                  }}
+                  name="coverPic"
+                  type="file"
+                  accept="image/jpg, image/jpeg, image/png"
+                />
+                {errArr.coverPic === undefined && (
+                  <small style={{ color: "red" }}>
+                    Please upload a cover picture for movie!!
+                  </small>
+                )}
+              </Box>
+            </Stack>
+            <Stack direction="row-reverse">
+              {!next ? (
+                <IconButton aria-label="next" size="small" type="submit">
+                  <ArrowForwardIcon />
                 </IconButton>
-                <Button
-                  size="small"
-                  variant="contained"
-                  type="submit"
-                  disabled={isLoad}
+              ) : (
+                <Stack
+                  width="100%"
+                  direction={"row"}
+                  justifyContent="space-between"
                 >
-                  {isLoad ? "Loading" : "Submit"}
-                </Button>
-              </Stack>
-            )}
-          </Stack>
-        </form>
-      </Stack>
-    </FormLayout>
+                  <IconButton
+                    aria-label="goback"
+                    onClick={() => setNext(false)}
+                    size="small"
+                  >
+                    <ArrowBackIcon />
+                  </IconButton>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    type="submit"
+                    disabled={isLoad}
+                  >
+                    {isLoad ? "Loading" : "Submit"}
+                  </Button>
+                </Stack>
+              )}
+            </Stack>
+          </form>
+        </Stack>
+      </FormLayout>
+    </MuiLayout>
   );
 };

@@ -21,6 +21,7 @@ import { AddCast } from "./routes/AddCast";
 import { ErrorGlobal } from "./routes/ErrorGlobal";
 import { AddMovie } from "./routes/AddMovie";
 import { EditMovie } from "./routes/EditMovie";
+import Paper from "@mui/material/Paper";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

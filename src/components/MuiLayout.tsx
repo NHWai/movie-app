@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import React from "react";
 
 type LayoutProps = {
@@ -7,18 +7,21 @@ type LayoutProps = {
 
 export const MuiLayout = ({ children }: LayoutProps) => {
   return (
-    <Box
-      sx={{
-        // minHeight: "95vh",
-        display: "flex",
-        flexDirection: "column",
-        paddingY: "1rem",
-        paddingX: "1.25rem",
-        maxWidth: "1024px",
-        marginX: "auto",
-      }}
-    >
-      {children}
-    </Box>
+    <Paper>
+      <Box
+        style={{ minHeight: `calc(100vh - 56px)` }}
+        sx={{
+          // minHeight: "80vh",
+          display: "flex",
+          flexDirection: "column",
+          paddingY: "1rem",
+          paddingX: "1.25rem",
+          maxWidth: "1024px",
+          marginX: "auto",
+        }}
+      >
+        {children}
+      </Box>
+    </Paper>
   );
 };

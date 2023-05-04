@@ -396,7 +396,7 @@ const Movie = () => {
                       <Box
                         key={idx}
                         sx={{
-                          height: "200px",
+                          height: "230px",
                           padding: 1,
                           margin: 0.8,
                           borderRadius: "0.3rem",

@@ -21,7 +21,6 @@ import { AddCast } from "./routes/AddCast";
 import { ErrorGlobal } from "./routes/ErrorGlobal";
 import { AddMovie } from "./routes/AddMovie";
 import { EditMovie } from "./routes/EditMovie";
-import CardSlider from "./components/CardSlider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,7 +32,6 @@ const router = createBrowserRouter(
       <Route path="error/:msg" element={<Error />} />
       <Route path="create" element={<AddMovie />} />
       <Route path="edit/:movieId" element={<EditMovie />} />
-      {/* <Route path="cardslider" element={<CardSlider />} /> */}
       <Route path="*" element={<ErrorGlobal />} />
     </Route>
   )

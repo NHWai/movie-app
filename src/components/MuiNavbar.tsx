@@ -20,13 +20,17 @@ import { Outlet, useLocation, Link as RouterLink } from "react-router-dom";
 import { initialToken, MyContext } from "./MyProvider";
 import { movieGenres } from "../routes/AddMovie";
 import { useSearchParams } from "react-router-dom";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import { useTheme } from "@mui/material/styles";
 
 export const MuiNavbar = () => {
-  const { token, setToken } = useContext(MyContext);
+  const { token, setToken, colorMode } = useContext(MyContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const theme = useTheme();
 
   React.useEffect(() => setAnchorEl(null), [token.tokenStr]);
 
@@ -52,7 +56,14 @@ export const MuiNavbar = () => {
                 Movies
               </Button>
             </Box>
-
+            {/* <div>darkmode</div> */}
+            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+              {theme.palette.mode === "dark" ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
+            </IconButton>
             {token.tokenStr ? (
               <div>
                 <IconButton

@@ -169,7 +169,7 @@ const Movie = () => {
               flexGrow={1}
               mb="2rem"
               sx={{
-                typography: { xs: "h4", sm: "h3", lg: "h2" },
+                typography: { xs: "h4", sm: "h3" },
                 fontWeight: "bold",
               }}
               align="center"

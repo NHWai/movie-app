@@ -1,4 +1,5 @@
 import React from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 type Props = {
   children: React.ReactNode;
@@ -14,6 +15,9 @@ type TokenType = {
 type MyContextType = {
   token: TokenType;
   setToken: React.Dispatch<React.SetStateAction<TokenType>>;
+  colorMode: {
+    toggleColorMode: () => void;
+  };
 };
 
 export const initialToken = {
@@ -26,6 +30,9 @@ export const initialToken = {
 export const MyContext = React.createContext<MyContextType>({
   token: initialToken,
   setToken: () => {},
+  colorMode: {
+    toggleColorMode: () => {},
+  },
 });
 
 export const MyProvider = ({ children }: Props) => {
@@ -42,10 +49,31 @@ export const MyProvider = ({ children }: Props) => {
     }
   }
 
+  //customizing theme
+  const [mode, setMode] = React.useState<"light" | "dark">("light");
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+      },
+    }),
+    []
+  );
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode]
+  );
+
   const [token, setToken] = React.useState<TokenType>(initialStateofToken);
   return (
-    <MyContext.Provider value={{ token, setToken }}>
-      {children}
+    <MyContext.Provider value={{ token, setToken, colorMode }}>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </MyContext.Provider>
   );
 };

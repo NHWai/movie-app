@@ -78,7 +78,7 @@ export const Home = () => {
       <Typography
         mb={"3rem"}
         align="center"
-        sx={{ typography: { xs: "h4", sm: "h3", lg: "h2" } }}
+        sx={{ typography: { xs: "h4", sm: "h3", lg: "h3" } }}
       >
         {searchParams.get("userid") && token ? "My Movies" : "All Movies"}
       </Typography>

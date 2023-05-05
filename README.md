@@ -1,7 +1,7 @@
 <h2 align='center'>MovieApp (movie info sharing)</h2>
 
 
-###Features
+### Features
 - [x] Authentication (login /logout using json web token)
 - [x] Upload Movie Info 
 - [x] Give Reviews/Ratings 
@@ -10,7 +10,7 @@
 - [x] Theme (Light/Dark)
 - [x] Fully Responsive
 
-###TechStack
+### TechStack
 - [x] React Typescript
 - [x] React MUI
 - [x] React Router
@@ -18,12 +18,12 @@
 - [x] MongoDB
 - [x] Cloudinary
 
-####UserRole
+#### UserRole
 - [x] Upload movies info
 - [x] View all your uploaded info
 - [x] Give reviews & ratings 
 
-####GuestRole
+#### GuestRole
 - [x] Browse movies
 - [x] View details of movie
 

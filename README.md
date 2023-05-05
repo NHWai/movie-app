@@ -1,5 +1,7 @@
-<h2 align='center'>MovieApp (movie info sharing)</h2>
-
+<h2 align='center'>MovieApp</h2>
+ 
+ A simple movie sharing app where you can save your favorite movies and browse the taste of others.
+ You can watch the demo [here](https://movie-app-six-nu.vercel.app/)
 
 ### Features
 - [x] Authentication (login /logout using json web token)

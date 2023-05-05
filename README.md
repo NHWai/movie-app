@@ -11,7 +11,7 @@
 - [x] Fully Responsive
 
 ###TechStack
-- [x] React
+- [x] React Typescript
 - [x] React MUI
 - [x] Express
 - [x] MongoDB

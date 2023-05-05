@@ -13,6 +13,7 @@
 ###TechStack
 - [x] React Typescript
 - [x] React MUI
+- [x] React Router
 - [x] Express
 - [x] MongoDB
 - [x] Cloudinary

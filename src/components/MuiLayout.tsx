@@ -11,7 +11,6 @@ export const MuiLayout = ({ children }: LayoutProps) => {
       <Box
         style={{ minHeight: `calc(100vh - 56px)` }}
         sx={{
-          // minHeight: "80vh",
           display: "flex",
           flexDirection: "column",
           paddingY: "1rem",

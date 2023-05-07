@@ -43,7 +43,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <MyProvider>
-    <RouterProvider router={router} />
+    <Paper>
+      <RouterProvider router={router} />
+    </Paper>
   </MyProvider>
 );
 

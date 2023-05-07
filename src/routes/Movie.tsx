@@ -139,7 +139,10 @@ const Movie = () => {
   const blankStarArr = blankStar ? new Array(blankStar).fill(1) : [];
 
   return (
-    <Box sx={{ paddingX: 1, marginY: "1rem" }}>
+    <Box
+      style={{ minHeight: `calc(100vh - 56px)` }}
+      sx={{ paddingX: 1, marginTop: "1rem", paddingBottom: "1rem" }}
+    >
       {movieItem && reviews ? (
         <>
           <Box

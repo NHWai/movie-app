@@ -84,6 +84,7 @@ export const movieGenres = [
   "Drama",
   "Documentary",
   "Fantasy",
+  "History",
   "Horror",
   "Legal",
   "Mystery",
@@ -92,6 +93,7 @@ export const movieGenres = [
   "Sci-Fi",
   "Sports",
   "Thriller",
+  "War",
   "Western",
   "SitCom",
 ];

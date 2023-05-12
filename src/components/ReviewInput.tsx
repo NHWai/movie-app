@@ -60,14 +60,14 @@ export const ReviewInput = ({
           };
         });
         break;
-      case "review":
+      case "comment":
         if (!inputValue.length) {
           error = `can't be empty`;
         }
         setErrMsg((pre) => {
           return {
             ...pre,
-            review: error,
+            comment: error,
           };
         });
         break;
@@ -129,9 +129,16 @@ export const ReviewInput = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     setIsLoad(true);
     uploadReview(formData, movieId, tokenStr, userId, username);
   };
+  // --> true
+  const isDisable =
+    Object.values(errMsg).some((el) => el !== "") ||
+    Object.values(formData).some((el) => el === "") ||
+    isLoad;
+  console.log("isDisable", isDisable);
 
   return (
     <Box
@@ -158,9 +165,10 @@ export const ReviewInput = ({
           onFocus={handleFocus}
           onBlur={(e) => validate(e.target.name, e.target.value)}
           onChange={handleChange}
+          autoComplete="off"
         />
         <TextField
-          label="give some review"
+          label="give your comment"
           variant="standard"
           multiline
           maxRows={4}
@@ -175,7 +183,7 @@ export const ReviewInput = ({
           onChange={handleChange}
         />
         <Button
-          disabled={isLoad}
+          disabled={isDisable}
           type="submit"
           sx={{ marginLeft: "auto", display: "block" }}
           variant="outlined"

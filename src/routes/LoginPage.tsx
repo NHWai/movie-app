@@ -237,7 +237,7 @@ export const LoginPage = () => {
                     : errMsg.pwd}
                 </FormHelperText>
               </FormControl>
-              {/* {isLogin && (
+              {isLogin && (
                 <TextField
                   required
                   fullWidth
@@ -251,10 +251,10 @@ export const LoginPage = () => {
                   onBlur={(e) => validate(e.target.name, e.target.value)}
                   onChange={handleChange}
                 >
-                  <MenuItem value="Admin">Admin</MenuItem>
+                  {/* <MenuItem value="Admin">Admin</MenuItem> */}
                   <MenuItem value="User">User</MenuItem>
                 </TextField>
-              )} */}
+              )}
             </Stack>
 
             <Stack direction="row-reverse">

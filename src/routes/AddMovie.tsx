@@ -382,7 +382,7 @@ export const AddMovie = () => {
                     onBlur={(e) => validateMovie("genres", e.target.value)}
                     helperText={errArr.genres !== "" ? errArr.genres : null}
                     select
-                    SelectProps={{ multiple: true }}
+                    SelectProps={{ multiple: true, autoWidth: true }}
                     autoComplete="off"
                   >
                     {movieGenres.map((el) => {

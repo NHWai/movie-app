@@ -357,7 +357,10 @@ export const EditMovie = () => {
                       onChange={handleChange}
                       onBlur={(e) => validateMovie("genres", e.target.value)}
                       select
-                      SelectProps={{ multiple: true }}
+                      SelectProps={{
+                        multiple: true,
+                        autoWidth: true,
+                      }}
                     >
                       {movieGenres.map((el) => {
                         return (

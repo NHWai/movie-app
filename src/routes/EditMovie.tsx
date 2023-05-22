@@ -5,10 +5,10 @@ import {
   IconButton,
   Button,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import React, { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
 
 import {
   ErrArr,
@@ -284,7 +284,16 @@ export const EditMovie = () => {
       </Button>
       <FormLayout>
         {!editMovie.title ? (
-          "Loading"
+          <Box
+            sx={{
+              display: "flex",
+              minHeight: "50vh",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress />
+          </Box>
         ) : (
           <Stack sx={{ width: "100%", maxWidth: "380px" }}>
             <form onSubmit={(e) => handleSubmitted(e)}>

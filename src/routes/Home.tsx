@@ -61,10 +61,9 @@ export const Home = () => {
         method: "GET",
         redirect: "follow",
       });
-      const { data } = await res.json();
-
+      const data = await res.json();
       if (res.status === 200) {
-        setmovieList(data);
+        setmovieList(data.data);
       } else {
         throw new Error(`${data.message}`);
       }

@@ -237,7 +237,7 @@ export const LoginPage = () => {
                     : errMsg.pwd}
                 </FormHelperText>
               </FormControl>
-              {isLogin && (
+              {/* {isLogin && (
                 <TextField
                   required
                   fullWidth
@@ -254,7 +254,7 @@ export const LoginPage = () => {
                   <MenuItem value="Admin">Admin</MenuItem>
                   <MenuItem value="User">User</MenuItem>
                 </TextField>
-              )}
+              )} */}
             </Stack>
 
             <Stack direction="row-reverse">
@@ -273,9 +273,7 @@ export const LoginPage = () => {
                     backgroundColor: "transparent",
                     border: "none",
                     cursor: "pointer",
-                    "&:hover": {
-                      color: "primary.dark",
-                    },
+                    color: "primary.dark",
                   }}
                   onClick={() => setIsLogin((pre) => !pre)}
                 >

@@ -79,6 +79,7 @@ export const movieGenres = [
   "Action",
   "Anime",
   "Adventure",
+  "Biography",
   "Comedy",
   "Crime",
   "Drama",
@@ -312,6 +313,7 @@ export const AddMovie = () => {
                     helperText={errArr.title !== "" ? errArr.title : null}
                     onBlur={(e) => validateMovie("title", e.target.value)}
                     onChange={handleChange}
+                    autoComplete="off"
                   />
 
                   <TextField
@@ -330,6 +332,7 @@ export const AddMovie = () => {
                     }
                     onBlur={(e) => validateMovie("rating", e.target.value)}
                     onChange={handleChange}
+                    autoComplete="off"
                   />
                   <TextField
                     style={{ marginBottom: "1rem" }}
@@ -342,6 +345,7 @@ export const AddMovie = () => {
                     onChange={handleChange}
                     helperText={errArr.year !== "" ? errArr.year : null}
                     onBlur={(e) => validateMovie("year", e.target.value)}
+                    autoComplete="off"
                   />
                   <TextField
                     error={errArr.review ? true : false}
@@ -355,6 +359,7 @@ export const AddMovie = () => {
                     onChange={handleChange}
                     helperText={errArr.review !== "" ? errArr.review : null}
                     onBlur={(e) => validateMovie("review", e.target.value)}
+                    autoComplete="off"
                   />
                 </>
               ) : (
@@ -371,6 +376,7 @@ export const AddMovie = () => {
                     helperText={errArr.genres !== "" ? errArr.genres : null}
                     select
                     SelectProps={{ multiple: true }}
+                    autoComplete="off"
                   >
                     {movieGenres.map((el) => {
                       return (
@@ -390,6 +396,7 @@ export const AddMovie = () => {
                     helperText={errArr.dirname !== "" ? errArr.dirname : null}
                     onChange={handleChange}
                     onBlur={(e) => validateMovie("dirname", e.target.value)}
+                    autoComplete="off"
                   />
                   <br />
                 </>

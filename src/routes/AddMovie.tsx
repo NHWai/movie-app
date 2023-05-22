@@ -297,6 +297,13 @@ export const AddMovie = () => {
 
   return (
     <MuiLayout>
+      <Button
+        sx={{ alignSelf: "flex-start", mb: 2 }}
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+      >
+        Go Back
+      </Button>
       <FormLayout>
         <Stack sx={{ width: "100%", maxWidth: "380px" }}>
           <form onSubmit={(e) => handleSubmitted(e)}>

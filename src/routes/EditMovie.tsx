@@ -280,10 +280,10 @@ export const EditMovie = () => {
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
       >
-        Main Page
+        Go Back
       </Button>
       <FormLayout>
-        {!editMovie ? (
+        {!editMovie.title ? (
           "Loading"
         ) : (
           <Stack sx={{ width: "100%", maxWidth: "380px" }}>

@@ -20,6 +20,13 @@ import { CardItem } from "../components/CardItem";
 import { MuiLayout } from "../components/MuiLayout";
 import { MyContext } from "../components/MyProvider";
 import Box from "@mui/system/Box";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {
+  getAllMovies,
+  getMoviesByGenre,
+  getMoviesByUserId,
+  selectMovies,
+} from "../features/movies/moviesSlice";
 
 export type MovielistType = MovieType & {
   _id: string;
@@ -28,49 +35,23 @@ export type MovielistType = MovieType & {
   totalReviews: number;
 };
 export const Home = () => {
-  const [movieList, setmovieList] = useState<MovielistType[] | null>();
-  const [movId, setMovId] = useState<string>("");
   const { token } = useContext(MyContext);
-
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const movies = useAppSelector(selectMovies);
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     const selectedGenre = searchParams.get("genres");
     const moviesByUserid = searchParams.get("userid");
     if (selectedGenre) {
-      getMovies("movies/genre", selectedGenre);
+      dispatch(getMoviesByGenre(selectedGenre));
     } else if (moviesByUserid) {
-      getMovies("movies/userId", moviesByUserid);
+      dispatch(getMoviesByUserId(moviesByUserid));
     } else {
-      getMovies("movies");
+      dispatch(getAllMovies());
     }
   }, [searchParams]);
-
-  React.useEffect(() => {
-    setmovieList((pre) => pre?.filter((el) => el._id !== movId));
-  }, [movId]);
-
-  const getMovies = async (resource: string, params?: string) => {
-    const endpoint = `${process.env.REACT_APP_BASE_URL}/${resource}/${
-      params ? params : ""
-    }`;
-
-    try {
-      const res = await fetch(endpoint, {
-        method: "GET",
-        redirect: "follow",
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        setmovieList(data.data);
-      } else {
-        throw new Error(`${data.message}`);
-      }
-    } catch (err) {
-      navigate(`/error/${err}`);
-    }
-  };
 
   return (
     <MuiLayout>
@@ -126,7 +107,7 @@ export const Home = () => {
         </Typography>
       )}
 
-      {movieList === undefined && (
+      {movies.status === "loading" && (
         <Box
           sx={{
             display: "flex",
@@ -139,7 +120,7 @@ export const Home = () => {
         </Box>
       )}
 
-      {movieList?.length === 0 && (
+      {movies.items.length === 0 && (
         <Stack
           minHeight={"50vh"}
           justifyContent={"center"}
@@ -149,7 +130,7 @@ export const Home = () => {
         </Stack>
       )}
       <Grid container spacing={2} rowSpacing={3}>
-        {movieList?.map((el) => {
+        {movies.items.map((el) => {
           const {
             totalRating,
             genres,
@@ -174,7 +155,6 @@ export const Home = () => {
                 title={title}
                 user={user}
                 totalReviews={totalReviews}
-                setMovId={setMovId}
                 photoUrl={photoUrl}
               />
             </Grid>

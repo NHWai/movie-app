@@ -286,7 +286,7 @@ export const AddMovie = () => {
         redirect: "follow",
       });
       if (res.status === 201) {
-        navigate("/");
+        navigate(-1);
       } else if (res.status === 401) {
         navigate("/login");
       }

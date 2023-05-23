@@ -22,6 +22,8 @@ import { ErrorGlobal } from "./routes/ErrorGlobal";
 import { AddMovie } from "./routes/AddMovie";
 import { EditMovie } from "./routes/EditMovie";
 import Paper from "@mui/material/Paper";
+import { Provider } from "react-redux";
+import { store } from "./app/store";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,11 +44,13 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <MyProvider>
-    <Paper>
-      <RouterProvider router={router} />
-    </Paper>
-  </MyProvider>
+  <Provider store={store}>
+    <MyProvider>
+      <Paper>
+        <RouterProvider router={router} />
+      </Paper>
+    </MyProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,9 +1,11 @@
-import { Typography, Button, Stack, Grid, Icon, Box } from "@mui/material";
+import { Typography, Button, Stack, Icon, Box } from "@mui/material";
 import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "./MyProvider";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import { deleteMovie } from "../features/movies/moviesSlice";
+import { useAppDispatch } from "../app/hooks";
 
 type PropsCardItem = {
   year: number | string;
@@ -16,7 +18,6 @@ type PropsCardItem = {
   photoUrl: string;
   user: string;
   totalReviews: number;
-  setMovId: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const CardItem = (props: PropsCardItem) => {
@@ -24,6 +25,7 @@ export const CardItem = (props: PropsCardItem) => {
   const [isDel, setIsDel] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const dispatch = useAppDispatch();
 
   const { title, rating, movieid, user, photoId, totalReviews, photoUrl } =
     props;
@@ -43,8 +45,7 @@ export const CardItem = (props: PropsCardItem) => {
         redirect: "follow",
       });
       if (res.status === 204) {
-        // add movie id to list to be hidden
-        props.setMovId(movieid);
+        dispatch(deleteMovie(movieid));
       } else if (res.status === 401) {
         throw Error(`Unauthorized user, login or signup`);
       } else {

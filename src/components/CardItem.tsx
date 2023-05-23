@@ -4,8 +4,8 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "./MyProvider";
 import StarRateIcon from "@mui/icons-material/StarRate";
-import { deleteMovie } from "../features/movies/moviesSlice";
-import { useAppDispatch } from "../app/hooks";
+import { deleteMovie, selectMovies } from "../features/movies/moviesSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 type PropsCardItem = {
   year: number | string;
@@ -26,40 +26,28 @@ export const CardItem = (props: PropsCardItem) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useAppDispatch();
+  const movies = useAppSelector(selectMovies);
 
   const { title, rating, movieid, user, photoId, totalReviews, photoUrl } =
     props;
 
-  const delMovie = async (
-    movieid: string,
-    tokenstr: string,
-    photoId: string
-  ) => {
-    const url = `${process.env.REACT_APP_BASE_URL}/movies/${movieid}/photoid/${photoId}`;
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${tokenstr}`);
-    try {
-      const res = await fetch(url, {
-        headers: myHeaders,
-        method: "DELETE",
-        redirect: "follow",
-      });
-      if (res.status === 204) {
-        dispatch(deleteMovie(movieid));
-      } else if (res.status === 401) {
-        throw Error(`Unauthorized user, login or signup`);
-      } else {
-        throw Error("Cannot delete the movie");
-      }
-    } catch (err) {
-      navigate(`error/${err}`);
-    }
-  };
-
   const handleDelete = () => {
     setIsDel(true);
-    delMovie(movieid, token.tokenStr, photoId.slice(4));
+    dispatch(
+      deleteMovie({
+        movieId: movieid,
+        photoId: photoId.slice(4),
+        tokenStr: token.tokenStr,
+      })
+    );
   };
+
+  React.useEffect(() => {
+    // Listen to the store and navigate when the action is resolved
+    if (movies.status === "failed") {
+      navigate(`/error`, { state: { errMsg: movies.errMsg } });
+    }
+  }, [movies.status]);
 
   return (
     <Box

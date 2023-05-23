@@ -1,5 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  apiDeleteMovie,
   apiGetAllMovies,
   apiGetMoviesByGenre,
   apiGetMoviesByUserId,
@@ -26,6 +27,7 @@ export interface Movie {
 export const initialState: {
   items: Movie[];
   status: "idle" | "loading" | "failed";
+  errMsg: string;
 } = {
   items: [
     // {
@@ -46,6 +48,7 @@ export const initialState: {
     // },
   ],
   status: "idle",
+  errMsg: "",
 };
 
 export const getAllMovies = createAsyncThunk(
@@ -72,13 +75,35 @@ export const getMoviesByUserId = createAsyncThunk(
   }
 );
 
+export const deleteMovie = createAsyncThunk(
+  "movies/apiDeleteMovie",
+  async (
+    movie: { movieId: string; photoId: string; tokenStr: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await apiDeleteMovie(movie);
+      if (response.status === 204) {
+        return movie.movieId;
+      } else if (response.status === 401) {
+        throw Error(`Unauthorized user, login or signup`);
+      } else {
+        throw Error("Failed to delete movie");
+      }
+    } catch (error: any) {
+      const errorMessage = error?.message || "Failed to delete movie.";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 export const moviesSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {
-    deleteMovie: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter((movie) => movie._id !== action.payload);
-    },
+    // deleteMovie: (state, action: PayloadAction<string>) => {
+    //   state.items = state.items.filter((movie) => movie._id !== action.payload);
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -114,9 +139,21 @@ export const moviesSlice = createSlice({
       })
       .addCase(getMoviesByUserId.rejected, (state) => {
         state.status = "failed";
+      })
+      .addCase(deleteMovie.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteMovie.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.items = state.items.filter(
+          (movie) => movie._id !== action.payload
+        );
+      })
+      .addCase(deleteMovie.rejected, (state, action) => {
+        state.status = "failed";
+        state.errMsg = action.payload as string;
       });
   },
 });
 export const selectMovies = (state: RootState) => state.movies;
-export const { deleteMovie } = moviesSlice.actions;
 export default moviesSlice.reducer;

@@ -2,13 +2,19 @@ import { Button, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {
+  ReviewInputType,
+  getReviewsByMovieId,
+  selectReviews,
+  uploadReview,
+} from "../features/reviews/reviewsSlice";
 
 interface ReviewInputProps {
   movieId: string;
   tokenStr: string;
   userId: string;
   username: string;
-  setIsSubmit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Review {
@@ -26,12 +32,23 @@ export const ReviewInput = ({
   tokenStr,
   userId,
   username,
-  setIsSubmit,
 }: ReviewInputProps) => {
   const [formData, setFormData] = useState<Review>(initialReview);
   const [errMsg, setErrMsg] = useState<Review>(initialReview);
   const [isLoad, setIsLoad] = useState(false);
+
   const navigate = useNavigate();
+  const reviews = useAppSelector(selectReviews);
+  const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    if (reviews.status === "failed") {
+      navigate(`/error`, { state: { errMsg: reviews.errMsg } });
+    } else if (reviews.status === "idle") {
+      setIsLoad(false);
+      setFormData(initialReview);
+    }
+  }, [reviews.status]);
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     setErrMsg((pre) => {
@@ -85,71 +102,78 @@ export const ReviewInput = ({
     });
   };
 
-  const uploadReview = async (
-    formData: Review,
-    movieId: string,
-    tokenStr: string,
-    userId: string,
-    username: string
-  ) => {
-    const url = `${process.env.REACT_APP_BASE_URL}/reviews/${movieId}`;
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${tokenStr}`);
-    myHeaders.append("Content-type", "application/json");
+  // const uploadReview = async (
+  //   formData: Review,
+  //   movieId: string,
+  //   tokenStr: string,
+  //   userId: string,
+  //   username: string
+  // ) => {
+  //   const url = `${process.env.REACT_APP_BASE_URL}/reviews/${movieId}`;
+  //   const myHeaders = new Headers();
+  //   myHeaders.append("Authorization", `Bearer ${tokenStr}`);
+  //   myHeaders.append("Content-type", "application/json");
 
-    const raw = JSON.stringify({
-      ...formData,
-      userId,
-      username,
-    });
+  //   const raw = JSON.stringify({
+  //     ...formData,
+  //     userId,
+  //     username,
+  //   });
 
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow",
-      });
+  //   try {
+  //     const res = await fetch(url, {
+  //       method: "POST",
+  //       headers: myHeaders,
+  //       body: raw,
+  //       redirect: "follow",
+  //     });
 
-      if (res.status === 201) {
-        const data = await res.json();
-        console.log(data);
-        setIsLoad(false);
-        setFormData(initialReview);
-        setIsSubmit(true);
-      } else if (res.status === 401) {
-        navigate("/login");
-      } else {
-        throw Error(`can't add the review`);
-      }
-    } catch (err) {
-      navigate(`/error/${err}`);
-    }
-  };
+  //     if (res.status === 201) {
+  //       const data = await res.json();
+  //       console.log(data);
+  //       setIsLoad(false);
+  //       setFormData(initialReview);
+  //     } else if (res.status === 401) {
+  //       navigate("/login");
+  //     } else {
+  //       throw Error(`can't add the review`);
+  //     }
+  //   } catch (err) {
+  //     navigate(`/error/${err}`);
+  //   }
+  // };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     setIsLoad(true);
-    uploadReview(formData, movieId, tokenStr, userId, username);
+    const reviewInput: ReviewInputType = {
+      ...formData,
+      rating: Number(formData.rating),
+      _id: "",
+      movieId,
+      userId,
+      username,
+      tokenStr,
+    };
+    dispatch(uploadReview(reviewInput));
+    // uploadReview(formData, movieId, tokenStr, userId, username);
   };
   // --> true
   const isDisable =
     Object.values(errMsg).some((el) => el !== "") ||
     Object.values(formData).some((el) => el === "") ||
     isLoad;
-  console.log("isDisable", isDisable);
 
   return (
     <Box
       sx={{
-        // backgroundColor: "rgb(128, 152, 191)",
         maxWidth: "800px",
         padding: "1.5rem",
         borderRadius: "0.3rem",
-        boxShadow: "0 2px 4px 0 rgba(0,0,0,0.2)",
+        boxShadow: "0 2px 3px 0",
         transition: "0.3s",
-        "&:hover": { boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)" },
+        "&:hover": { boxShadow: "0 4px 8px 0" },
       }}
     >
       <form onSubmit={handleSubmit}>

@@ -9,7 +9,6 @@ import {
 import React, { useState, useContext } from "react";
 import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { MovielistType } from "./Home";
 import { ReviewBox } from "../components/ReviewBox";
 import { ReviewInput } from "../components/ReviewInput";
 import { MyContext } from "../components/MyProvider";
@@ -18,92 +17,35 @@ import StarRateIcon from "@mui/icons-material/StarRate";
 import { StarHalf } from "@mui/icons-material";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-
-interface MovieItemType {
-  _id: string;
-  user: {
-    _id: string;
-    username: string;
-  };
-  title: string;
-  director: {
-    name: string;
-    gender: string;
-  };
-  genres: string[];
-  totalRating: number;
-  rating: number;
-  review: string;
-  year: number;
-  photoUrl: string;
-  photoId: string;
-}
-
-interface ReviewType {
-  _id: string;
-  rating: number;
-  comment: string;
-  movieId: string;
-  userId: string;
-  username: string;
-}
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getMovieById, selectMovies } from "../features/movies/moviesSlice";
+import {
+  Review,
+  ReviewInputType,
+  removeReviews,
+  selectReviews,
+} from "../features/reviews/reviewsSlice";
 
 const Movie = () => {
   const { token } = useContext(MyContext);
   let { id } = useParams();
-  const [movieItem, setMovieItem] = useState<MovieItemType>();
-  const [reviews, setReviews] = useState<ReviewType[]>([]);
-  const [isSubmit, setIsSubmit] = useState(false);
-  const [movieList, setMovieList] = useState<MovielistType[]>([]);
+
+  const movies = useAppSelector(selectMovies);
+  const reviews = useAppSelector(selectReviews);
+
+  const reviewArr = [...movies.movieDetails.reviews, ...reviews.items]
+    .map((post) => JSON.stringify(post))
+    .filter((str, idx, arr) => arr.indexOf(str) === idx)
+    .map((str) => JSON.parse(str));
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const url = "movies";
-    const url2 = "reviews";
-    const getData = async (id: string) => {
-      try {
-        //fetching movie
-        const fetchMovie = await fetchData(url, id, setMovieItem);
-        window.scrollTo(0, 0);
-        if (!fetchMovie) {
-          throw Error("failed to fetch movie");
-        }
-
-        //fetching reviews
-        fetchData(url2, id, setReviews);
-      } catch (err) {
-        navigate(`/error/${err}`);
-      }
-    };
-    id && getData(id);
-  }, [id, navigate, isSubmit]);
-
-  React.useEffect(() => {
-    const url = `movies/genre`;
-    const genre = movieItem?.genres.join(",").toLowerCase();
-
-    fetchData(url, genre as string, setMovieList);
-  }, [movieItem]);
-
-  const fetchData = async (
-    url: string,
-    id: string,
-    setFunc: (smth: any) => void
-  ) => {
-    const res = await fetch(`${process.env.REACT_APP_BASE_URL}/${url}/${id}`, {
-      method: "GET",
-      redirect: "follow",
-    });
-    const data = await res.json();
-
-    if (res.status === 200) {
-      setFunc(data.data);
-      return true;
-    } else {
-      return false;
-    }
-  };
+    window.scrollTo(0, 0); //scroll to top
+    dispatch(getMovieById(id as string));
+    dispatch(removeReviews());
+  }, [id]);
 
   const responsive = {
     superLargeDesktop: {
@@ -132,8 +74,14 @@ const Movie = () => {
     },
   };
 
-  const ratingStar = Math.floor(movieItem?.totalRating as number);
-  const halfStar = Number.isInteger(movieItem?.totalRating as number) ? 0 : 1;
+  const ratingStar = Math.floor(
+    movies.movieDetails?.movie?.totalRating as number
+  );
+  const halfStar = Number.isInteger(
+    movies.movieDetails?.movie?.totalRating as number
+  )
+    ? 0
+    : 1;
   const blankStar = 5 - ratingStar - halfStar;
   const ratingStarArr = ratingStar ? new Array(ratingStar).fill(1) : [];
   const blankStarArr = blankStar ? new Array(blankStar).fill(1) : [];
@@ -141,9 +89,14 @@ const Movie = () => {
   return (
     <Box
       style={{ minHeight: `calc(100vh - 56px)` }}
-      sx={{ paddingX: 1, marginTop: "1rem", paddingBottom: "1rem" }}
+      sx={{
+        paddingX: 1,
+        marginTop: "1rem",
+        paddingBottom: "1rem",
+        userSelect: "none",
+      }}
     >
-      {movieItem && reviews ? (
+      {movies.movieDetails?.movie._id && movies.status === "idle" ? (
         <>
           <Box
             sx={{
@@ -174,10 +127,11 @@ const Movie = () => {
               sx={{
                 typography: { xs: "h4", sm: "h3" },
                 fontWeight: "bold",
+                userSelect: "none",
               }}
               align="center"
             >
-              {movieItem?.title}
+              {movies.movieDetails?.movie?.title}
             </Typography>
           </Box>
           <Box
@@ -200,28 +154,28 @@ const Movie = () => {
               alignItems={{ xs: "start", md: "center" }}
               spacing={5}
             >
-              {movieItem.photoUrl && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    width: { xs: "fit-content", sm: "500px" },
-                    height: "300px",
-                    boxShadow: "0 4px 8px rgba(0,0,0,0.5)",
+              {/* { movies.movieDetails?.movie?.photoUrl && ( */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: { xs: "fit-content", sm: "500px" },
+                  height: "300px",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.5)",
+                }}
+              >
+                <img
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "5px",
+                    objectFit: "contain",
                   }}
-                >
-                  <img
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "5px",
-                      objectFit: "contain",
-                    }}
-                    src={movieItem?.photoUrl}
-                    alt="coverPhoto"
-                  />
-                </Box>
-              )}
+                  src={movies.movieDetails?.movie?.photoUrl}
+                  alt="coverPhoto"
+                />
+              </Box>
+              {/* )} */}
               <Box
                 sx={{
                   display: { xs: "none", md: "block" },
@@ -240,16 +194,18 @@ const Movie = () => {
                   </Typography>
                 </Box>
                 <Typography variant="subtitle2" fontStyle={"italic"}>
-                  Genres: <b> {movieItem?.genres?.join(",")}</b>
+                  Genres:{" "}
+                  <b> {movies.movieDetails?.movie?.genres?.join(",")}</b>
                 </Typography>
                 <Typography variant="subtitle2" fontStyle={"italic"}>
-                  Directed by <b> {movieItem?.director.name}</b>
+                  Directed by{" "}
+                  <b> {movies.movieDetails?.movie?.director.name}</b>
                 </Typography>
                 <Typography variant="subtitle2" fontStyle={"italic"}>
-                  Released Date: {movieItem?.year}
+                  Released Date: {movies.movieDetails?.movie?.year}
                 </Typography>
                 <Typography variant="subtitle2" fontStyle={"italic"}>
-                  Rating : {movieItem?.totalRating}
+                  Rating : {movies.movieDetails?.movie?.totalRating}
                 </Typography>
                 <Stack mt={1}>
                   <div>
@@ -270,8 +226,11 @@ const Movie = () => {
                     ))}
                   </div>
                   <Typography ml={1.5} variant="caption">
-                    ( {reviews.length + 1}{" "}
-                    {reviews.length + 1 === 1 ? "review" : "reviews"} )
+                    ( {movies.movieDetails?.reviews?.length + 1}{" "}
+                    {movies.movieDetails?.reviews?.length + 1 === 1
+                      ? "review"
+                      : "reviews"}{" "}
+                    )
                   </Typography>
                 </Stack>
               </Box>
@@ -294,16 +253,16 @@ const Movie = () => {
                 </Typography>
               </Box>
               <Typography variant="subtitle2" fontStyle={"italic"}>
-                Genres: <b> {movieItem?.genres?.join(",")}</b>
+                Genres: <b> {movies.movieDetails?.movie?.genres?.join(",")}</b>
               </Typography>
               <Typography variant="subtitle2" fontStyle={"italic"}>
-                Directed by <b> {movieItem?.director.name}</b>
+                Directed by <b> {movies.movieDetails?.movie?.director.name}</b>
               </Typography>
               <Typography variant="subtitle2" fontStyle={"italic"}>
-                Released Date: {movieItem?.year}
+                Released Date: {movies.movieDetails?.movie?.year}
               </Typography>
               <Typography variant="subtitle2" fontStyle={"italic"}>
-                Rating : {movieItem?.totalRating}
+                Rating : {movies.movieDetails?.movie?.totalRating}
               </Typography>
               <Stack mt={1}>
                 <div>
@@ -324,11 +283,15 @@ const Movie = () => {
                   ))}
                 </div>
                 <Typography ml={1.5} variant="caption">
-                  ( {reviews.length + 1}{" "}
-                  {reviews.length + 1 === 1 ? "review" : "reviews"} )
+                  ( {movies.movieDetails?.reviews?.length + 1}{" "}
+                  {movies.movieDetails?.reviews?.length + 1 === 1
+                    ? "review"
+                    : "reviews"}{" "}
+                  )
                 </Typography>
               </Stack>
             </Box>
+            {/* FEATURED REVIEWS */}
             <Stack
               width={"100%"}
               maxWidth={"700px"}
@@ -346,11 +309,11 @@ const Movie = () => {
                 <Typography variant="h5">Featured Reviews</Typography>
               </div>
               <ReviewBox
-                rating={movieItem.rating}
-                reviewText={movieItem?.review}
-                author={movieItem.user.username}
+                rating={movies.movieDetails?.movie?.rating}
+                reviewText={movies.movieDetails?.movie?.review}
+                author={movies.movieDetails.movie.user.username}
               />
-              {reviews.map((review, idx) => {
+              {reviewArr.map((review, idx) => {
                 return (
                   <ReviewBox
                     key={idx}
@@ -362,24 +325,34 @@ const Movie = () => {
               })}
               {/*check token string, check login user is not original upload user of the movie ,check login user is not added review */}
               {token.tokenStr &&
-                token.id !== movieItem.user._id &&
-                !reviews?.some((el) => el.userId === token.id) && (
+                token.id !== movies.movieDetails?.movie?.user._id &&
+                !reviewArr.some((el) => el.userId === token.id) && (
                   <>
-                    <Typography my={2} variant="h6" fontStyle={"italic"}>
-                      Add review
-                    </Typography>
+                    <div
+                      style={{
+                        borderLeft: "3px solid blue",
+                        paddingLeft: "1rem",
+                        marginLeft: "-1rem",
+                        marginBottom: "1rem",
+                        marginTop: "1rem",
+                      }}
+                    >
+                      <Typography variant="h5" fontStyle={"italic"}>
+                        Add review
+                      </Typography>
+                    </div>
                     <ReviewInput
-                      movieId={movieItem._id}
+                      movieId={movies.movieDetails?.movie?._id}
                       tokenStr={token.tokenStr}
                       userId={token.id}
                       username={token.username}
-                      setIsSubmit={setIsSubmit}
                     />
                   </>
                 )}
             </Stack>
             {/* Movies with same genres*/}
-            {movieList.filter((el) => el._id !== movieItem._id).length > 0 && (
+
+            {movies.movieDetails.moreItems.length > 0 && (
               <Box
                 sx={{
                   maxWidth: `${
@@ -400,75 +373,73 @@ const Movie = () => {
                   </Typography>
                 </div>
                 <Carousel responsive={responsive}>
-                  {movieList
-                    ?.filter((el) => el._id !== movieItem._id)
-                    .map((el, idx) => (
+                  {movies.movieDetails.moreItems.map((el, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        height: "230px",
+                        padding: 1,
+                        margin: 0.8,
+                        borderRadius: "0.3rem",
+                        boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+                        position: "relative",
+                      }}
+                    >
                       <Box
-                        key={idx}
                         sx={{
-                          height: "230px",
-                          padding: 1,
-                          margin: 0.8,
-                          borderRadius: "0.3rem",
-                          boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-                          position: "relative",
+                          position: "absolute",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        component={RouterLink}
+                        to={`/movie/${el._id}`}
+                      ></Box>
+                      <Box
+                        sx={{
+                          height: "150px",
+                          width: "100%",
+                          mb: 1,
                         }}
                       >
-                        <Box
-                          sx={{
-                            position: "absolute",
+                        <img
+                          src={el.photoUrl}
+                          style={{
                             width: "100%",
                             height: "100%",
+                            objectFit: "cover",
                           }}
-                          component={RouterLink}
-                          to={`/movie/${el._id}`}
-                        ></Box>
-                        <Box
-                          sx={{
-                            height: "150px",
-                            width: "100%",
-                            mb: 1,
-                          }}
-                        >
-                          <img
-                            src={el.photoUrl}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </Box>
-                        <Typography
-                          variant="body1"
-                          fontWeight={"bold"}
-                          component="div"
-                          align="center"
-                        >
-                          {el.title}
-                        </Typography>
-                        <Stack
-                          flexDirection={"row"}
-                          alignItems={"center"}
-                          justifyContent={"center"}
-                          gap={0.5}
-                        >
-                          <Typography
-                            variant="body2"
-                            fontStyle={"italic"}
-                          >{`Rating : ${el.rating}`}</Typography>
-                          <Stack mt={-1}>
-                            <Icon fontSize="small">
-                              <StarRateIcon color="warning" />
-                            </Icon>
-                          </Stack>
-                          <Typography variant="caption">
-                            ({el.totalReviews}{" "}
-                            {el.totalReviews === 1 ? "review" : "reviews"})
-                          </Typography>
-                        </Stack>
+                        />
                       </Box>
-                    ))}
+                      <Typography
+                        variant="body1"
+                        fontWeight={"bold"}
+                        component="div"
+                        align="center"
+                      >
+                        {el.title}
+                      </Typography>
+                      <Stack
+                        flexDirection={"row"}
+                        alignItems={"center"}
+                        justifyContent={"center"}
+                        gap={0.5}
+                      >
+                        <Typography
+                          variant="body2"
+                          fontStyle={"italic"}
+                        >{`Rating : ${el.rating}`}</Typography>
+                        <Stack mt={-1}>
+                          <Icon fontSize="small">
+                            <StarRateIcon color="warning" />
+                          </Icon>
+                        </Stack>
+                        <Typography variant="caption">
+                          ({el.totalReviews}{" "}
+                          {el.totalReviews === 1 ? "review" : "reviews"})
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  ))}
                 </Carousel>
               </Box>
             )}

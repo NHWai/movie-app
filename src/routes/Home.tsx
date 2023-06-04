@@ -26,6 +26,7 @@ import {
   getMoviesByGenre,
   getMoviesByUserId,
   selectMovies,
+  getMoviesByGenresWithUserId,
 } from "../features/movies/moviesSlice";
 
 export type MovielistType = MovieType & {
@@ -37,19 +38,20 @@ export type MovielistType = MovieType & {
 export const Home = () => {
   const { token } = useContext(MyContext);
   const [searchParams, setSearchParams] = useSearchParams();
-
   const movies = useAppSelector(selectMovies);
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     const selectedGenre = searchParams.get("genres");
     const moviesByUserid = searchParams.get("userid");
-    if (selectedGenre) {
+    if (moviesByUserid && selectedGenre) {
+      dispatch(getMoviesByGenresWithUserId(selectedGenre));
+    } else if (selectedGenre) {
       dispatch(getMoviesByGenre(selectedGenre));
     } else if (moviesByUserid) {
       dispatch(getMoviesByUserId(moviesByUserid));
     } else {
-      dispatch(getAllMovies());
+      movies.items.length === 0 && dispatch(getAllMovies());
     }
   }, [searchParams]);
 
@@ -58,7 +60,10 @@ export const Home = () => {
       <Typography
         mb={"3rem"}
         align="center"
-        sx={{ typography: { xs: "h4", sm: "h3", lg: "h3" } }}
+        sx={{
+          typography: { xs: "h4", sm: "h3", lg: "h3" },
+          userSelect: "none",
+        }}
       >
         {searchParams.get("userid") && token ? "My Movies" : "All Movies"}
       </Typography>
@@ -83,9 +88,17 @@ export const Home = () => {
         <Autocomplete
           value={searchParams.get("genres") || null}
           onChange={(event: any, newValue: string | null) => {
-            !newValue
-              ? setSearchParams("")
-              : setSearchParams(`?genres=${newValue}`);
+            const moviesByUserid = searchParams.get("userid");
+            if (!newValue) {
+              setSearchParams("");
+              moviesByUserid && setSearchParams({ userid: moviesByUserid });
+              dispatch(getAllMovies());
+            } else {
+              // setSearchParams(`?genres=${newValue}`);
+              moviesByUserid
+                ? setSearchParams({ userid: moviesByUserid, genres: newValue })
+                : setSearchParams({ genres: newValue });
+            }
           }}
           size="small"
           disablePortal
@@ -120,7 +133,7 @@ export const Home = () => {
         </Box>
       )}
 
-      {movies.items.length === 0 && (
+      {movies.items.length === 0 && movies.status === "idle" && (
         <Stack
           minHeight={"50vh"}
           justifyContent={"center"}

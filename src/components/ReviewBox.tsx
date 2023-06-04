@@ -17,9 +17,10 @@ export const ReviewBox = ({ reviewText, author, rating }: Props) => {
           position: "relative",
           padding: "1.5rem",
           borderRadius: "0.3rem",
-          boxShadow: "0 2px 4px 0 rgba(0,0,0,0.2)",
+          boxShadow: "0 1px 2px 0",
+          color: "common.black.light",
           transition: "0.3s",
-          "&:hover": { boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)" },
+          "&:hover": { boxShadow: "0 1.8px 3.6px 0" },
         }}
       >
         <Typography mb={1} variant="subtitle2">

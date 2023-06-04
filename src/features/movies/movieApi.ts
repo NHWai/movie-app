@@ -10,6 +10,10 @@ export function apiGetMoviesByUserId(userId: string) {
   return fetch(`${process.env.REACT_APP_BASE_URL}/movies/userId/${userId}`);
 }
 
+export function apiGetMovieById(movieId: string) {
+  return fetch(`${process.env.REACT_APP_BASE_URL}/movies/${movieId}`);
+}
+
 export function apiDeleteMovie(movie: {
   movieId: string;
   photoId: string;

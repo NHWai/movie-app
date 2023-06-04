@@ -23,6 +23,8 @@ import { useSearchParams } from "react-router-dom";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useTheme } from "@mui/material/styles";
+import { getAllMovies } from "../features/movies/moviesSlice";
+import { useAppDispatch } from "../app/hooks";
 
 export const MuiNavbar = () => {
   const { token, setToken, colorMode } = useContext(MyContext);
@@ -39,6 +41,8 @@ export const MuiNavbar = () => {
     setToken(initialToken);
   };
 
+  const dispatch = useAppDispatch();
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -52,7 +56,12 @@ export const MuiNavbar = () => {
               <MenuIcon />
             </IconButton>
             <Box sx={{ flexGrow: 1 }}>
-              <Button component={RouterLink} to="/" color="inherit">
+              <Button
+                component={RouterLink}
+                to="/"
+                color="inherit"
+                onClick={() => dispatch(getAllMovies())}
+              >
                 Movies
               </Button>
             </Box>

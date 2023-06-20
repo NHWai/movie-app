@@ -46,16 +46,12 @@ export const EditMovie = () => {
       errArrCloned[key] = "";
     }
     setErrArr(errArrCloned);
+    dispatch(getMovieById(movieId as string));
   }, []);
 
   //fetching related movie
   React.useEffect(() => {
-    if (movies.movieDetails.movie._id !== movieId) {
-      dispatch(getMovieById(movieId as string));
-      console.log("dispatching");
-    } else {
-      console.log("setting");
-
+    if (movies.movieDetails.movie._id === movieId) {
       const fetchedMovie = movies.movieDetails.movie;
       setEditMovie(() => {
         return {

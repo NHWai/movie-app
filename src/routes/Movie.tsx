@@ -19,12 +19,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getMovieById, selectMovies } from "../features/movies/moviesSlice";
-import {
-  Review,
-  ReviewInputType,
-  removeReviews,
-  selectReviews,
-} from "../features/reviews/reviewsSlice";
+import { removeReviews, selectReviews } from "../features/reviews/reviewsSlice";
 
 const Movie = () => {
   const { token } = useContext(MyContext);
@@ -43,8 +38,10 @@ const Movie = () => {
 
   React.useEffect(() => {
     window.scrollTo(0, 0); //scroll to top
-    dispatch(getMovieById(id as string));
-    dispatch(removeReviews());
+    if (movies.movieDetails.movie._id !== id) {
+      dispatch(getMovieById(id as string));
+      dispatch(removeReviews());
+    }
   }, [id]);
 
   const responsive = {

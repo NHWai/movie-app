@@ -23,10 +23,14 @@ import { MyContext } from "../components/MyProvider";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MuiLayout } from "../components/MuiLayout";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getMovieById, selectMovies } from "../features/movies/moviesSlice";
 
 export const EditMovie = () => {
   const { movieId } = useParams();
   const { token } = useContext(MyContext);
+  const movies = useAppSelector(selectMovies);
+  const dispatch = useAppDispatch();
   const [editMovie, setEditMovie] =
     React.useState<MovieProps>(initialMovieProps);
   const [next, setNext] = React.useState(false);
@@ -46,36 +50,25 @@ export const EditMovie = () => {
 
   //fetching related movie
   React.useEffect(() => {
-    const fetchData = async (url: string, id: string | undefined) => {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BASE_URL}/${url}/${id}`,
-          {
-            method: "GET",
-            redirect: "follow",
-          }
-        );
-        const data = await res.json();
+    if (movies.movieDetails.movie._id !== movieId) {
+      dispatch(getMovieById(movieId as string));
+      console.log("dispatching");
+    } else {
+      console.log("setting");
 
-        if (res.status === 200) {
-          const fetchedMovie = data.data;
-          const director = fetchedMovie.director;
-          delete fetchedMovie.director;
-          setEditMovie(() => {
-            return {
-              ...fetchedMovie,
-              dirname: director.name,
-            };
-          });
-        } else {
-          throw Error("Cannot fetch the movie");
-        }
-      } catch (err) {
-        navigate(`error/${err}`);
-      }
-    };
-    movieId && fetchData("movies", movieId);
-  }, [movieId, navigate]);
+      const fetchedMovie = movies.movieDetails.movie;
+      setEditMovie(() => {
+        return {
+          title: fetchedMovie.title,
+          genres: fetchedMovie.genres,
+          rating: String(fetchedMovie.rating),
+          review: fetchedMovie.review,
+          year: String(fetchedMovie.year),
+          dirname: fetchedMovie.director.name,
+        };
+      });
+    }
+  }, [movieId, movies.status]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //if it is array
@@ -110,7 +103,7 @@ export const EditMovie = () => {
 
     if (Object.values(errArr).every((el) => el === "") && next) {
       setIsLoad(true);
-
+      console.log(editMovie);
       const formData: MovieType = {
         title: editMovie.title,
         director: {
@@ -120,8 +113,8 @@ export const EditMovie = () => {
         rating: editMovie.rating,
         review: editMovie.review,
         year: editMovie.year,
-        photoUrl: editMovie.photoUrl,
-        photoId: editMovie.photoId,
+        photoUrl: movies.movieDetails.movie.photoUrl,
+        photoId: movies.movieDetails.movie.photoId,
       };
       const formDataObj: any = new FormData(e.target);
 
@@ -262,9 +255,12 @@ export const EditMovie = () => {
         redirect: "follow",
       });
 
-      console.log(res.status);
       if (res.status === 200) {
-        navigate("/");
+        const data = await res.json();
+        console.log(data);
+        //?userid=64155f5f26a891fd851a16b5
+        const userId = movies.movieDetails.movie.user._id;
+        navigate(`/?userid=${userId}`);
       } else {
         throw Error("cannot update the movie");
       }
@@ -283,7 +279,8 @@ export const EditMovie = () => {
         Go Back
       </Button>
       <FormLayout>
-        {!editMovie.title ? (
+        {movies.status === "loading" ||
+        movies.movieDetails.movie._id !== movieId ? (
           <Box
             sx={{
               display: "flex",

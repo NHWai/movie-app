@@ -166,7 +166,7 @@ export const Home = () => {
                 genres={genres}
                 rating={totalRating as number}
                 title={title}
-                user={user}
+                user={user._id as string}
                 totalReviews={totalReviews}
                 photoUrl={photoUrl}
               />

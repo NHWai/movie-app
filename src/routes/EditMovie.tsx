@@ -16,7 +16,6 @@ import {
   initialMovieProps,
   movieGenres,
   MovieProps,
-  MovieType,
 } from "../routes/AddMovie";
 import { FormLayout } from "../components/FormLayout";
 import { MyContext } from "../components/MyProvider";
@@ -24,7 +23,12 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MuiLayout } from "../components/MuiLayout";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getMovieById, selectMovies } from "../features/movies/moviesSlice";
+import {
+  getMovieById,
+  Movie,
+  selectMovies,
+  updateMovieInStore,
+} from "../features/movies/moviesSlice";
 
 export const EditMovie = () => {
   const { movieId } = useParams();
@@ -46,10 +50,9 @@ export const EditMovie = () => {
       errArrCloned[key] = "";
     }
     setErrArr(errArrCloned);
-    dispatch(getMovieById(movieId as string));
   }, []);
 
-  //fetching related movie
+  //set related movie to editMovie
   React.useEffect(() => {
     if (movies.movieDetails.movie._id === movieId) {
       const fetchedMovie = movies.movieDetails.movie;
@@ -63,6 +66,9 @@ export const EditMovie = () => {
           dirname: fetchedMovie.director.name,
         };
       });
+    }
+    if (movies.movieDetails.movie._id !== movieId) {
+      dispatch(getMovieById(movieId as string));
     }
   }, [movieId, movies.status]);
 
@@ -99,16 +105,17 @@ export const EditMovie = () => {
 
     if (Object.values(errArr).every((el) => el === "") && next) {
       setIsLoad(true);
-      console.log(editMovie);
-      const formData: MovieType = {
+
+      const formData: Movie = {
+        ...movies.movieDetails.movie,
         title: editMovie.title,
         director: {
           name: editMovie.dirname,
         },
         genres: editMovie.genres,
-        rating: editMovie.rating,
+        rating: parseInt(editMovie.rating, 10),
         review: editMovie.review,
-        year: editMovie.year,
+        year: parseInt(editMovie.year, 10),
         photoUrl: movies.movieDetails.movie.photoUrl,
         photoId: movies.movieDetails.movie.photoId,
       };
@@ -119,7 +126,7 @@ export const EditMovie = () => {
       formDataObj.delete("genres");
 
       for (const key in formData) {
-        if (key === "director" || key === "genres") {
+        if (key === "director" || key === "genres" || key === "user") {
           formDataObj.append(key, JSON.stringify(formData[key]));
         } else {
           formDataObj.append(key, formData[key]);
@@ -255,6 +262,7 @@ export const EditMovie = () => {
         const data = await res.json();
         console.log(data);
         //?userid=64155f5f26a891fd851a16b5
+        dispatch(updateMovieInStore(data.data));
         const userId = movies.movieDetails.movie.user._id;
         navigate(`/?userid=${userId}`);
       } else {

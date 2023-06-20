@@ -30,7 +30,7 @@ export const CardItem = (props: PropsCardItem) => {
 
   const { title, rating, movieid, user, photoId, totalReviews, photoUrl } =
     props;
-
+  // console.log(user, token.id);
   const handleDelete = () => {
     setIsDel(true);
     dispatch(

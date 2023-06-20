@@ -38,9 +38,12 @@ const Movie = () => {
 
   React.useEffect(() => {
     window.scrollTo(0, 0); //scroll to top
-
-    dispatch(getMovieById(id as string));
-    dispatch(removeReviews());
+    // dispatch(getMovieById(id as string));
+    // dispatch(removeReviews());
+    if (movies.movieDetails.movie._id !== id) {
+      dispatch(getMovieById(id as string));
+      dispatch(removeReviews());
+    }
   }, [id]);
 
   const responsive = {
@@ -150,7 +153,6 @@ const Movie = () => {
               alignItems={{ xs: "start", md: "center" }}
               spacing={5}
             >
-              {/* { movies.movieDetails?.movie?.photoUrl && ( */}
               <Box
                 sx={{
                   display: "flex",

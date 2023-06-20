@@ -10,9 +10,29 @@ import {
 } from "./movieApi";
 import { RootState } from "../../app/store";
 
+// export interface Movie {
+//   _id: string;
+//   user: string;
+//   title: string;
+//   director: {
+//     name: string;
+//   };
+//   rating: number;
+//   review: string;
+//   year: number;
+//   genres: string[];
+//   photoId: string;
+//   photoUrl: string;
+//   totalRating: number;
+//   totalReviews: number;
+// }
+
 export interface Movie {
   _id: string;
-  user: string;
+  user: {
+    _id: string;
+    username: string;
+  };
   title: string;
   director: {
     name: string;
@@ -25,28 +45,16 @@ export interface Movie {
   photoUrl: string;
   totalRating: number;
   totalReviews: number;
+  [key: string]:
+    | string
+    | number
+    | string[]
+    | { _id: string; username: string }
+    | { name: string };
 }
 
 export interface MovieDetails {
-  movie: {
-    _id: string;
-    user: {
-      _id: string;
-      username: string;
-    };
-    title: string;
-    director: {
-      name: string;
-    };
-    rating: number;
-    review: string;
-    year: number;
-    genres: string[];
-    photoId: string;
-    photoUrl: string;
-    totalRating: number;
-    totalReviews: number;
-  };
+  movie: Movie;
   reviews: Review[];
   moreItems: Movie[];
 }
@@ -149,6 +157,12 @@ export const moviesSlice = createSlice({
         movie.genres.some((genre) => genre === action.payload)
       );
     },
+    updateMovieInStore: (state, action: PayloadAction<Movie>) => {
+      state.items = state.items.map((movie) =>
+        movie.id === action.payload._id ? action.payload : movie
+      );
+      state.movieDetails.movie = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -211,7 +225,8 @@ export const moviesSlice = createSlice({
   },
 });
 
-export const { getMoviesByGenresWithUserId } = moviesSlice.actions;
+export const { getMoviesByGenresWithUserId, updateMovieInStore } =
+  moviesSlice.actions;
 
 export const selectMovies = (state: RootState) => state.movies;
 export default moviesSlice.reducer;

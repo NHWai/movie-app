@@ -20,6 +20,7 @@
 - [x] Express
 - [x] MongoDB
 - [x] Cloudinary
+- [x] Redux
 
 #### UserRole
 - [x] Upload movies info

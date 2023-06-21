@@ -24,7 +24,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { MuiLayout } from "../components/MuiLayout";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
-  getMovieById,
+  fetchMovieById,
   Movie,
   selectMovies,
   updateMovieInStore,
@@ -68,7 +68,7 @@ export const EditMovie = () => {
       });
     }
     if (movies.movieDetails.movie._id !== movieId) {
-      dispatch(getMovieById(movieId as string));
+      dispatch(fetchMovieById(movieId as string));
     }
   }, [movieId, movies.status]);
 

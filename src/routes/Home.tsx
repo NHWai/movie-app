@@ -27,6 +27,7 @@ import {
   getMoviesByUserId,
   selectMovies,
   getMoviesByGenresWithUserId,
+  fetchAllMovies,
 } from "../features/movies/moviesSlice";
 
 export type MovielistType = MovieType & {
@@ -42,18 +43,23 @@ export const Home = () => {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
+    !movies.items.length && dispatch(fetchAllMovies());
+  }, []);
+  React.useEffect(() => {
     const selectedGenre = searchParams.get("genres");
     const moviesByUserid = searchParams.get("userid");
     if (moviesByUserid && selectedGenre) {
-      dispatch(getMoviesByGenresWithUserId(selectedGenre));
+      dispatch(
+        getMoviesByGenresWithUserId({ userId: token.id, genre: selectedGenre })
+      );
     } else if (selectedGenre) {
       dispatch(getMoviesByGenre(selectedGenre));
     } else if (moviesByUserid) {
       dispatch(getMoviesByUserId(moviesByUserid));
     } else {
-      movies.items.length === 0 && dispatch(getAllMovies());
+      dispatch(getAllMovies());
     }
-  }, [searchParams]);
+  }, [searchParams, movies.status]);
 
   return (
     <MuiLayout>
@@ -133,7 +139,7 @@ export const Home = () => {
         </Box>
       )}
 
-      {movies.items.length === 0 && movies.status === "idle" && (
+      {movies.filteredItems.length === 0 && movies.status === "idle" && (
         <Stack
           minHeight={"50vh"}
           justifyContent={"center"}
@@ -143,7 +149,7 @@ export const Home = () => {
         </Stack>
       )}
       <Grid container spacing={2} rowSpacing={3}>
-        {movies.items.map((el) => {
+        {movies.filteredItems.map((el) => {
           const {
             totalRating,
             genres,

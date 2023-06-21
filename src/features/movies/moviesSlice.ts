@@ -3,29 +3,12 @@ import { Review } from "../reviews/reviewsSlice";
 
 import {
   apiDeleteMovie,
-  apiGetAllMovies,
-  apiGetMoviesByGenre,
-  apiGetMoviesByUserId,
-  apiGetMovieById,
+  apiFetchAllMovies,
+  apiFetchMoviesByGenre,
+  apiFetchMoviesByUserId,
+  apiFetchMovieById,
 } from "./movieApi";
 import { RootState } from "../../app/store";
-
-// export interface Movie {
-//   _id: string;
-//   user: string;
-//   title: string;
-//   director: {
-//     name: string;
-//   };
-//   rating: number;
-//   review: string;
-//   year: number;
-//   genres: string[];
-//   photoId: string;
-//   photoUrl: string;
-//   totalRating: number;
-//   totalReviews: number;
-// }
 
 export interface Movie {
   _id: string;
@@ -61,11 +44,13 @@ export interface MovieDetails {
 
 export const initialState: {
   items: Movie[];
+  filteredItems: Movie[];
   status: "idle" | "loading" | "failed";
   errMsg: string;
   movieDetails: MovieDetails;
 } = {
   items: [],
+  filteredItems: [],
   status: "idle",
   errMsg: "",
   movieDetails: {
@@ -93,35 +78,35 @@ export const initialState: {
   },
 };
 
-export const getAllMovies = createAsyncThunk(
-  "movies/apiGetAllMovies",
+export const fetchAllMovies = createAsyncThunk(
+  "movies/apiFetchAllMovies",
   async () => {
-    const response = await apiGetAllMovies();
+    const response = await apiFetchAllMovies();
     return response.json();
   }
 );
 
-export const getMoviesByGenre = createAsyncThunk(
-  "movies/apiGetMoviesByGenre",
+export const fetchMoviesByGenre = createAsyncThunk(
+  "movies/apiFetchMoviesByGenre",
   async (genre: string) => {
     console.log("genre", genre);
-    const response = await apiGetMoviesByGenre(genre);
+    const response = await apiFetchMoviesByGenre(genre);
     return response.json();
   }
 );
 
-export const getMoviesByUserId = createAsyncThunk(
-  "movies/apiGetMoviesByUserId",
+export const fetchMoviesByUserId = createAsyncThunk(
+  "movies/apiFetchMoviesByUserId",
   async (userId: string) => {
-    const resposne = await apiGetMoviesByUserId(userId);
+    const resposne = await apiFetchMoviesByUserId(userId);
     return resposne.json();
   }
 );
 
-export const getMovieById = createAsyncThunk(
-  "movies/apiGetMovieById",
+export const fetchMovieById = createAsyncThunk(
+  "movies/apiFetchMovieById",
   async (movieId: string) => {
-    const response = await apiGetMovieById(movieId);
+    const response = await apiFetchMovieById(movieId);
     return response.json();
   }
 );
@@ -152,9 +137,27 @@ export const moviesSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {
-    getMoviesByGenresWithUserId: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter((movie) =>
+    getAllMovies: (state) => {
+      state.filteredItems = state.items;
+    },
+    getMoviesByGenresWithUserId: (
+      state,
+      action: PayloadAction<{ userId: string; genre: string }>
+    ) => {
+      state.filteredItems = state.items
+        .filter((movie) => movie.user._id === action.payload.userId)
+        .filter((movie) =>
+          movie.genres.some((genre) => genre === action.payload.genre)
+        );
+    },
+    getMoviesByGenre: (state, action: PayloadAction<string>) => {
+      state.filteredItems = state.items.filter((movie) =>
         movie.genres.some((genre) => genre === action.payload)
+      );
+    },
+    getMoviesByUserId: (state, action: PayloadAction<string>) => {
+      state.filteredItems = state.items.filter(
+        (movie) => movie.user._id === action.payload
       );
     },
     updateMovieInStore: (state, action: PayloadAction<Movie>) => {
@@ -166,37 +169,37 @@ export const moviesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllMovies.pending, (state) => {
+      .addCase(fetchAllMovies.pending, (state) => {
         state.status = "loading";
         state.items = [];
       })
-      .addCase(getAllMovies.fulfilled, (state, action) => {
+      .addCase(fetchAllMovies.fulfilled, (state, action) => {
         state.status = "idle";
         state.items = action.payload.data;
       })
-      .addCase(getAllMovies.rejected, (state) => {
+      .addCase(fetchAllMovies.rejected, (state) => {
         state.status = "failed";
       })
-      .addCase(getMoviesByGenre.pending, (state) => {
+      .addCase(fetchMoviesByGenre.pending, (state) => {
         state.status = "loading";
         state.items = [];
       })
-      .addCase(getMoviesByGenre.fulfilled, (state, action) => {
+      .addCase(fetchMoviesByGenre.fulfilled, (state, action) => {
         state.status = "idle";
         state.items = action.payload.data;
       })
-      .addCase(getMoviesByGenre.rejected, (state) => {
+      .addCase(fetchMoviesByGenre.rejected, (state) => {
         state.status = "failed";
       })
-      .addCase(getMoviesByUserId.pending, (state) => {
+      .addCase(fetchMoviesByUserId.pending, (state) => {
         state.status = "loading";
         state.items = [];
       })
-      .addCase(getMoviesByUserId.fulfilled, (state, action) => {
+      .addCase(fetchMoviesByUserId.fulfilled, (state, action) => {
         state.status = "idle";
         state.items = action.payload.data;
       })
-      .addCase(getMoviesByUserId.rejected, (state) => {
+      .addCase(fetchMoviesByUserId.rejected, (state) => {
         state.status = "failed";
       })
       .addCase(deleteMovie.pending, (state) => {
@@ -212,21 +215,26 @@ export const moviesSlice = createSlice({
         state.status = "failed";
         state.errMsg = action.payload as string;
       })
-      .addCase(getMovieById.pending, (state) => {
+      .addCase(fetchMovieById.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(getMovieById.fulfilled, (state, action) => {
+      .addCase(fetchMovieById.fulfilled, (state, action) => {
         state.status = "idle";
         state.movieDetails = action.payload.data;
       })
-      .addCase(getMovieById.rejected, (state) => {
+      .addCase(fetchMovieById.rejected, (state) => {
         state.status = "failed";
       });
   },
 });
 
-export const { getMoviesByGenresWithUserId, updateMovieInStore } =
-  moviesSlice.actions;
+export const {
+  getMoviesByGenresWithUserId,
+  updateMovieInStore,
+  getAllMovies,
+  getMoviesByGenre,
+  getMoviesByUserId,
+} = moviesSlice.actions;
 
 export const selectMovies = (state: RootState) => state.movies;
 export default moviesSlice.reducer;

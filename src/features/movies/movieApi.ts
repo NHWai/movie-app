@@ -1,16 +1,16 @@
-export function apiGetAllMovies() {
+export function apiFetchAllMovies() {
   return fetch(`${process.env.REACT_APP_BASE_URL}/movies/`);
 }
 
-export function apiGetMoviesByGenre(genre: string) {
+export function apiFetchMoviesByGenre(genre: string) {
   return fetch(`${process.env.REACT_APP_BASE_URL}/movies/genre/${genre}`);
 }
 
-export function apiGetMoviesByUserId(userId: string) {
+export function apiFetchMoviesByUserId(userId: string) {
   return fetch(`${process.env.REACT_APP_BASE_URL}/movies/userId/${userId}`);
 }
 
-export function apiGetMovieById(movieId: string) {
+export function apiFetchMovieById(movieId: string) {
   return fetch(`${process.env.REACT_APP_BASE_URL}/movies/${movieId}`);
 }
 

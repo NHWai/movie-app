@@ -32,6 +32,7 @@ import {
 import theme from "../config/theme";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { Fade } from "react-awesome-reveal";
 
 export type MovielistType = MovieType & {
   _id: string;
@@ -154,6 +155,7 @@ export const Home = () => {
           No Movies
         </Stack>
       )}
+
       <Grid container spacing={2} rowSpacing={3}>
         {movies.filteredItems.map((el) => {
           const {
@@ -170,18 +172,20 @@ export const Home = () => {
           } = el;
           return (
             <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
-              <CardItem
-                photoId={photoId as string}
-                movieid={id}
-                directorname={director.name}
-                year={year}
-                genres={genres}
-                rating={totalRating as number}
-                title={title}
-                user={user._id as string}
-                totalReviews={totalReviews}
-                photoUrl={photoUrl}
-              />
+              <Fade triggerOnce={true} delay={100}>
+                <CardItem
+                  photoId={photoId as string}
+                  movieid={id}
+                  directorname={director.name}
+                  year={year}
+                  genres={genres}
+                  rating={totalRating as number}
+                  title={title}
+                  user={user._id as string}
+                  totalReviews={totalReviews}
+                  photoUrl={photoUrl}
+                />
+              </Fade>
             </Grid>
           );
         })}

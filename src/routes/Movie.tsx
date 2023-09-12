@@ -24,6 +24,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../config/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import SubHeading from "../components/SubHeading";
+import { Slide } from "react-awesome-reveal";
 
 const Movie = () => {
   const { token } = useContext(MyContext);
@@ -282,19 +283,24 @@ const Movie = () => {
               fontStyle={"italic"}
             >
               <SubHeading title={"Featured Reviews"} />
-              <ReviewBox
-                rating={movies.movieDetails?.movie?.rating}
-                reviewText={movies.movieDetails?.movie?.review}
-                author={movies.movieDetails.movie.user.username}
-              />
+              <Slide direction="up">
+                <ReviewBox
+                  rating={movies.movieDetails?.movie?.rating}
+                  reviewText={movies.movieDetails?.movie?.review}
+                  author={movies.movieDetails.movie.user.username}
+                />
+              </Slide>
               {reviewArr.map((review, idx) => {
                 return (
-                  <ReviewBox
-                    key={idx}
-                    reviewText={review.comment}
-                    author={review.username}
-                    rating={review.rating}
-                  />
+                  <Box key={idx}>
+                    <Slide direction="up">
+                      <ReviewBox
+                        reviewText={review.comment}
+                        author={review.username}
+                        rating={review.rating}
+                      />
+                    </Slide>
+                  </Box>
                 );
               })}
               {/*check token string, check login user is not original upload user of the movie ,check login user is not added review */}

@@ -6,6 +6,10 @@ import { MyContext } from "./MyProvider";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import { deleteMovie, selectMovies } from "../features/movies/moviesSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import theme from "../config/theme";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { Css } from "@mui/icons-material";
 
 type PropsCardItem = {
   year: number | string;
@@ -52,7 +56,7 @@ export const CardItem = (props: PropsCardItem) => {
   return (
     <Box
       sx={{
-        height: searchParams.get("userid") ? "255px" : "230px",
+        height: searchParams.get("userid") ? "285px" : "260px",
         padding: 1,
         margin: 0.8,
         borderRadius: "0.3rem",
@@ -94,14 +98,12 @@ export const CardItem = (props: PropsCardItem) => {
           justifyContent: "space-around",
         }}
       >
-        <Typography
-          variant="body1"
-          fontWeight={"bold"}
-          component="div"
-          align="center"
-        >
-          {title}
-        </Typography>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Typography variant="subtitle1" component="div" align="center">
+            {title}
+          </Typography>
+        </ThemeProvider>
         <Stack
           flexDirection={"row"}
           alignItems={"center"}

@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  CssBaseline,
   Divider,
   Drawer,
   IconButton,
@@ -22,9 +23,10 @@ import { movieGenres } from "../routes/AddMovie";
 import { useSearchParams } from "react-router-dom";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { useTheme } from "@mui/material/styles";
+import { ThemeProvider, useTheme } from "@mui/material/styles";
 import { getAllMovies } from "../features/movies/moviesSlice";
 import { useAppDispatch } from "../app/hooks";
+import themeprops from "../config/theme";
 
 export const MuiNavbar = () => {
   const { token, setToken, colorMode } = useContext(MyContext);
@@ -56,14 +58,18 @@ export const MuiNavbar = () => {
               <MenuIcon />
             </IconButton>
             <Box sx={{ flexGrow: 1 }}>
-              <Button
-                component={RouterLink}
-                to="/"
-                color="inherit"
-                onClick={() => dispatch(getAllMovies())}
-              >
-                Movies
-              </Button>
+              <ThemeProvider theme={themeprops}>
+                <CssBaseline />
+                <Typography
+                  component={RouterLink}
+                  to="/"
+                  color="inherit"
+                  sx={{ textDecoration: "none", cursor: "pointer" }}
+                  onClick={() => dispatch(getAllMovies())}
+                >
+                  Movie Review
+                </Typography>
+              </ThemeProvider>
             </Box>
             {/* <div>darkmode</div> */}
             <IconButton onClick={colorMode.toggleColorMode} color="inherit">

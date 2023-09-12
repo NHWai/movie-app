@@ -26,7 +26,7 @@ export const ReviewBox = ({ reviewText, author, rating }: Props) => {
         <Typography mb={1} variant="subtitle2">
           Rating: {rating}/<sub>5</sub>
         </Typography>
-        <div>{reviewText}</div>
+        <Typography>{reviewText}</Typography>
 
         <Box
           sx={{

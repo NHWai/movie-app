@@ -20,6 +20,10 @@ import "react-multi-carousel/lib/styles.css";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { fetchMovieById, selectMovies } from "../features/movies/moviesSlice";
 import { removeReviews, selectReviews } from "../features/reviews/reviewsSlice";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../config/theme";
+import CssBaseline from "@mui/material/CssBaseline";
+import SubHeading from "../components/SubHeading";
 
 const Movie = () => {
   const { token } = useContext(MyContext);
@@ -118,19 +122,21 @@ const Movie = () => {
             >
               Go Back
             </Button>
-
-            <Typography
-              flexGrow={1}
-              mb="2rem"
-              sx={{
-                typography: { xs: "h4", sm: "h3" },
-                fontWeight: "bold",
-                userSelect: "none",
-              }}
-              align="center"
-            >
-              {movies.movieDetails?.movie?.title}
-            </Typography>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Typography
+                flexGrow={1}
+                mb="2rem"
+                sx={{
+                  typography: { xs: "h4", sm: "h3" },
+                  fontWeight: "bold",
+                  userSelect: "none",
+                }}
+                align="center"
+              >
+                {movies.movieDetails?.movie?.title}
+              </Typography>
+            </ThemeProvider>
           </Box>
           <Box
             sx={{
@@ -151,6 +157,7 @@ const Movie = () => {
               justifyContent={"start"}
               alignItems={{ xs: "start", md: "center" }}
               spacing={5}
+              sx={{ marginBottom: "1rem" }}
             >
               <Box
                 sx={{
@@ -178,18 +185,8 @@ const Movie = () => {
                   display: { xs: "none", md: "block" },
                 }}
               >
-                <Box
-                  sx={{
-                    borderLeft: "3px solid blue",
-                    paddingLeft: "1rem",
-                    marginLeft: "-1rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <Typography fontStyle={"italic"} variant="h5">
-                    Details
-                  </Typography>
-                </Box>
+                <SubHeading title="Details" />
+
                 <Typography variant="subtitle2" fontStyle={"italic"}>
                   Genres:{" "}
                   <b> {movies.movieDetails?.movie?.genres?.join(",")}</b>
@@ -237,18 +234,7 @@ const Movie = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              <Box
-                sx={{
-                  borderLeft: "3px solid blue",
-                  paddingLeft: "1rem",
-                  marginLeft: "-1rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <Typography fontStyle={"italic"} variant="h5">
-                  Details
-                </Typography>
-              </Box>
+              <SubHeading title="Details" />
               <Typography variant="subtitle2" fontStyle={"italic"}>
                 Genres: <b> {movies.movieDetails?.movie?.genres?.join(",")}</b>
               </Typography>
@@ -295,16 +281,7 @@ const Movie = () => {
               alignSelf={"start"}
               fontStyle={"italic"}
             >
-              <div
-                style={{
-                  borderLeft: "3px solid blue",
-                  paddingLeft: "1rem",
-                  marginLeft: "-1rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <Typography variant="h5">Featured Reviews</Typography>
-              </div>
+              <SubHeading title={"Featured Reviews"} />
               <ReviewBox
                 rating={movies.movieDetails?.movie?.rating}
                 reviewText={movies.movieDetails?.movie?.review}
@@ -357,18 +334,7 @@ const Movie = () => {
                   }px`,
                 }}
               >
-                <div
-                  style={{
-                    borderLeft: "3px solid blue",
-                    paddingLeft: "1rem",
-                    marginLeft: "-1rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <Typography fontStyle={"italic"} variant="h5">
-                    More Like This
-                  </Typography>
-                </div>
+                <SubHeading title="More Like This" />
                 <Carousel responsive={responsive}>
                   {movies.movieDetails.moreItems.map((el, idx) => (
                     <Box

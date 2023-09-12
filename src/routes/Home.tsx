@@ -29,6 +29,9 @@ import {
   getMoviesByGenresWithUserId,
   fetchAllMovies,
 } from "../features/movies/moviesSlice";
+import theme from "../config/theme";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
 export type MovielistType = MovieType & {
   _id: string;
@@ -63,16 +66,19 @@ export const Home = () => {
 
   return (
     <MuiLayout>
-      <Typography
-        mb={"3rem"}
-        align="center"
-        sx={{
-          typography: { xs: "h4", sm: "h3", lg: "h3" },
-          userSelect: "none",
-        }}
-      >
-        {searchParams.get("userid") && token ? "My Movies" : "All Movies"}
-      </Typography>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Typography
+          mb={"3rem"}
+          align="center"
+          sx={{
+            typography: { xs: "h4", sm: "h3", lg: "h3" },
+            userSelect: "none",
+          }}
+        >
+          {searchParams.get("userid") && token ? "My Movies" : "All Movies"}
+        </Typography>
+      </ThemeProvider>
 
       <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2, mb: 4 }}>
         {token.tokenStr && (

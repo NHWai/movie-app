@@ -1,4 +1,11 @@
-import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useContext } from "react";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -417,7 +424,9 @@ export const AddMovie = () => {
                   gap: "0.4rem",
                 }}
               >
-                <label>Cover Image</label>
+                <label>
+                  <Typography>Cover Image</Typography>{" "}
+                </label>
                 <input
                   onChange={(e) => {
                     if (e.target?.files) {
@@ -438,9 +447,9 @@ export const AddMovie = () => {
                   accept="image/jpg, image/jpeg, image/png"
                 />
                 {errArr.coverPic === undefined && (
-                  <small style={{ color: "red" }}>
+                  <Typography style={{ color: "red" }}>
                     Please upload a cover picture for movie!!
-                  </small>
+                  </Typography>
                 )}
               </Box>
             </Stack>

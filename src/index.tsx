@@ -30,7 +30,11 @@ const router = createBrowserRouter(
     <Route path="/" element={<MuiNavbar />}>
       <Route index element={<App />} />
       <Route path="login" element={<LoginPage />} />
-      <Route path="movie/:id" element={<Movie />} />
+      <Route
+        path="movie/:id"
+        element={<Movie />}
+        errorElement={<ErrorGlobal />}
+      />
       <Route path="cast/:movieId" element={<AddCast />} />
       <Route path="error/:msg" element={<Error />} />
       <Route path="create" element={<AddMovie />} />

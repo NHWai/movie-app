@@ -283,7 +283,7 @@ const Movie = () => {
               fontStyle={"italic"}
             >
               <SubHeading title={"Featured Reviews"} />
-              <Slide direction="up">
+              <Slide direction="up" triggerOnce={true}>
                 <ReviewBox
                   rating={movies.movieDetails?.movie?.rating}
                   reviewText={movies.movieDetails?.movie?.review}
